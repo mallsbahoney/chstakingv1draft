@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ChainStaking</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--g:#00ff87;--gdim:rgba(0,255,135,.10);--gbrd:rgba(0,255,135,.22);--b:#00c2ff;--bdim:rgba(0,194,255,.10);--gold:#ffbe0b;--red:#ff3b5c;--rdim:rgba(255,59,92,.09);--s:.18s ease;}
+[data-theme="dark"]{--bg:#07090d;--bg2:#0b0f16;--bg3:#101620;--sf:#131a26;--sf2:#192233;--bd:rgba(255,255,255,.055);--bd2:rgba(255,255,255,.10);--tx:#edf2f8;--tx2:#6b7e96;--tx3:#303f52;}
+[data-theme="light"]{--bg:#eef1f7;--bg2:#e4e8f2;--bg3:#d9dfeb;--sf:#ffffff;--sf2:#edf0f8;--bd:rgba(0,0,0,.065);--bd2:rgba(0,0,0,.12);--tx:#0b1119;--tx2:#48596e;--tx3:#96afc4;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent;}
+html[data-theme="dark"],html[data-theme="dark"] body{background-color:#07090d!important;}
+html[data-theme="light"],html[data-theme="light"] body{background-color:#eef1f7!important;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;transition:background var(--s),color var(--s);}
+.page{display:none;background:var(--bg);min-height:100vh;}
+.page.active{display:block;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:400;background:var(--bg2);border-bottom:1px solid var(--bd);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
+.nav-i{max-width:1120px;margin:0 auto;padding:0 16px;height:52px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.logo{display:flex;align-items:center;gap:8px;font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--tx);cursor:pointer;user-select:none;flex-shrink:0;}
+.lchain{display:flex;align-items:center;gap:3px;}
+.lnode{width:11px;height:11px;border-radius:50%;border:2px solid var(--g);}
+.lnode.d{border-color:var(--tx3);}
+.lbar{width:7px;height:2px;background:var(--bd2);}
+.nav-r{display:flex;align-items:center;gap:5px;}
+.nbtn{padding:5px 11px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;border:none;color:var(--tx2);background:transparent;font-family:'DM Sans',sans-serif;transition:all var(--s);white-space:nowrap;}
+.nbtn:hover{color:var(--tx);background:var(--sf);}
+.nbtn.on{background:var(--sf2);color:var(--tx);border:1px solid var(--bd2);}
+.tbtn{width:32px;height:32px;border-radius:7px;background:var(--sf);border:1px solid var(--bd2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;transition:all var(--s);}
+.wbtn{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:7px;font-size:12px;font-family:'DM Mono',monospace;cursor:pointer;background:var(--sf);border:1px solid var(--bd2);color:var(--tx2);transition:all var(--s);white-space:nowrap;flex-shrink:0;}
+.wbtn.on{color:var(--g);border-color:var(--gbrd);background:var(--gdim);}
+.wdot{width:6px;height:6px;border-radius:50%;background:var(--g);box-shadow:0 0 6px var(--g);animation:blink 2s infinite;flex-shrink:0;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* SHARED */
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 18px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all var(--s);white-space:nowrap;}
+.btn-g{background:var(--g);color:#050a06;}
+.btn-g:hover:not(:disabled){background:#22ffaa;box-shadow:0 0 20px rgba(0,255,135,.25);}
+.btn-ghost{background:var(--sf2);color:var(--tx2);border:1px solid var(--bd2);}
+.btn-ghost:hover:not(:disabled){color:var(--tx);border-color:var(--tx3);}
+.btn-red{background:var(--rdim);color:var(--red);border:1px solid rgba(255,59,92,.22);}
+.btn-red:hover:not(:disabled){background:rgba(255,59,92,.16);}
+.btn:disabled{opacity:.35;cursor:not-allowed;}
+.btn-sm{padding:7px 13px;font-size:12px;border-radius:7px;}
+
+/* LANDING */
+#landing{background:var(--bg);}
+.hero{padding:64px 16px 48px;max-width:1120px;margin:0 auto;}
+.badge{display:inline-flex;align-items:center;gap:7px;padding:4px 12px;border-radius:100px;background:var(--gdim);border:1px solid var(--gbrd);font-size:11px;font-weight:600;letter-spacing:1.3px;text-transform:uppercase;color:var(--g);margin-bottom:22px;}
+.bdot{width:5px;height:5px;border-radius:50%;background:var(--g);animation:blink 1.5s infinite;}
+h1{font-family:'Syne',sans-serif;font-size:clamp(36px,6vw,64px);font-weight:800;line-height:.97;letter-spacing:-2px;margin-bottom:18px;color:var(--tx);}
+h1 em{color:var(--g);font-style:normal;}
+.hero-sub{font-size:16px;color:var(--tx2);line-height:1.65;margin-bottom:28px;max-width:540px;}
+.hero-btns{display:flex;gap:10px;flex-wrap:wrap;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:0 16px 48px;max-width:1120px;margin:0 auto;}
+@media(max-width:600px){.stats{grid-template-columns:1fr 1fr;}}
+.stat-card{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:16px;}
+.stat-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;margin-bottom:3px;color:var(--tx);}
+.stat-val.g{color:var(--g);}
+.stat-lbl{font-size:11px;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px;}
+.section{padding:48px 16px;max-width:1120px;margin:0 auto;}
+.sec-head{margin-bottom:28px;}
+.sec-head h2{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;letter-spacing:-1px;color:var(--tx);margin-bottom:6px;}
+.sec-head p{font-size:14px;color:var(--tx2);}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+@media(max-width:700px){.steps{grid-template-columns:1fr 1fr;}}
+@media(max-width:400px){.steps{grid-template-columns:1fr;}}
+.step{background:var(--sf);border:1px solid var(--bd);border-radius:13px;padding:20px;}
+.step-n{font-family:'DM Mono',monospace;font-size:36px;font-weight:400;color:var(--bd2);line-height:1;margin-bottom:12px;}
+.step h3{font-size:14px;font-weight:600;margin-bottom:7px;color:var(--tx);}
+.step p{font-size:13px;color:var(--tx2);line-height:1.6;}
+.landing-footer{text-align:center;padding:36px 16px 64px;}
+
+/* DISCLAIMER */
+#disclaimer{background:var(--bg);}
+.dis-wrap{max-width:600px;margin:0 auto;padding:60px 16px;}
+.dis-wrap h2{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;letter-spacing:-.5px;margin-bottom:6px;color:var(--tx);}
+.dis-sub{font-size:14px;color:var(--tx2);margin-bottom:24px;line-height:1.5;}
+.dis-box{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:20px;font-size:13px;color:var(--tx2);line-height:1.8;max-height:240px;overflow-y:auto;margin-bottom:22px;}
+.dis-box::-webkit-scrollbar{width:4px;}
+.dis-box::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px;}
+.dis-box h4{color:var(--tx);font-size:13px;margin:13px 0 4px;}
+.dis-box h4:first-child{margin-top:0;}
+.checks{display:flex;flex-direction:column;gap:11px;margin-bottom:22px;}
+.ck{display:flex;align-items:flex-start;gap:11px;cursor:pointer;}
+.ck input[type=checkbox]{display:none;}
+.ckbox{width:19px;height:19px;border-radius:5px;border:2px solid var(--bd2);background:var(--sf);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all var(--s);margin-top:1px;}
+.ck input:checked+.ckbox{background:var(--g);border-color:var(--g);}
+.ck input:checked+.ckbox::after{content:'✓';font-size:11px;color:#050a06;font-weight:700;}
+.ck-lbl{font-size:13px;color:var(--tx2);line-height:1.5;}
+.ck-lbl strong{color:var(--tx);}
+.enter-btn{width:100%;padding:13px;background:var(--g);color:#050a06;font-size:15px;font-weight:700;font-family:'DM Sans',sans-serif;border:none;border-radius:9px;cursor:pointer;transition:all var(--s);opacity:.3;pointer-events:none;}
+.enter-btn.ready{opacity:1;pointer-events:all;}
+.enter-btn.ready:hover{background:#22ffaa;box-shadow:0 0 22px rgba(0,255,135,.25);}
+
+/* PROTOCOL */
+#protocol{background:var(--bg);}
+.proto-wrap{max-width:800px;margin:0 auto;padding:32px 16px;}
+.proto-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px;}
+.proto-head h2{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;letter-spacing:-.5px;color:var(--tx);}
+
+/* CHAIN DROPDOWN SELECTOR */
+.chain-selector{position:relative;flex-shrink:0;}
+.chain-select-btn{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--sf);border:1px solid var(--bd2);border-radius:9px;font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:var(--tx);cursor:pointer;transition:all var(--s);}
+.chain-select-btn:hover{border-color:var(--g);}
+.chain-select-btn .arr{font-size:10px;color:var(--tx3);transition:transform var(--s);}
+.chain-select-btn.open .arr{transform:rotate(180deg);}
+.chain-dropdown{position:absolute;top:calc(100% + 6px);right:0;background:var(--sf);border:1px solid var(--bd2);border-radius:11px;overflow:hidden;min-width:160px;z-index:100;display:none;box-shadow:0 8px 24px rgba(0,0,0,.3);}
+.chain-dropdown.open{display:block;}
+.chain-opt{padding:10px 16px;font-family:'DM Mono',monospace;font-size:13px;color:var(--tx2);cursor:pointer;transition:all var(--s);display:flex;align-items:center;justify-content:space-between;}
+.chain-opt:hover{background:var(--sf2);color:var(--tx);}
+.chain-opt.active{color:var(--g);background:var(--gdim);}
+.chain-opt-status{font-size:9px;padding:2px 6px;border-radius:4px;}
+
+/* CHAIN PAGE */
+.chain-page{display:flex;flex-direction:column;gap:14px;}
+
+/* ENTRY CARD */
+.entry-card{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:20px;}
+.entry-card-title{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);font-family:'DM Mono',monospace;margin-bottom:16px;}
+.entry-flow{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+.entry-box{flex:1;min-width:140px;background:var(--bg3);border:1px solid var(--bd2);border-radius:10px;padding:12px 14px;}
+.entry-box-lbl{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);margin-bottom:6px;}
+.entry-box-val{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--tx);}
+.entry-box-val.g{color:var(--g);}
+.entry-box-sub{font-size:10px;color:var(--tx3);margin-top:3px;}
+.entry-arrow{font-size:18px;color:var(--tx3);flex-shrink:0;}
+
+/* PROFIT BREAKDOWN */
+.profit-breakdown{background:var(--bg3);border:1px solid var(--bd2);border-radius:10px;padding:14px;margin-bottom:20px;}
+.pb-title{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);font-family:'DM Mono',monospace;margin-bottom:10px;}
+.pb-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--bd);font-size:13px;}
+.pb-row:last-child{border-bottom:none;}
+.pb-key{color:var(--tx2);}
+.pb-val{font-family:'DM Mono',monospace;font-weight:500;}
+.pb-val.g{color:var(--g);}
+.pb-val.gold{color:var(--gold);}
+.pb-val.b{color:var(--b);}
+
+/* YIELD & BOUNTY CARDS */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:560px){.two-col{grid-template-columns:1fr;}}
+.info-card{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:18px;}
+.info-card-title{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);font-family:'DM Mono',monospace;margin-bottom:12px;}
+.info-card-val{font-family:'DM Mono',monospace;font-size:28px;font-weight:500;margin-bottom:4px;}
+.info-card-val.g{color:var(--g);}
+.info-card-val.b{color:var(--b);}
+.info-card-sub{font-size:12px;color:var(--tx3);line-height:1.5;}
+
+/* DONATION BAR */
+.don-bar-wrap{margin-top:14px;}
+.don-bar-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.don-bar-lbl{font-size:11px;color:var(--tx2);font-weight:500;}
+.don-bar-vals{font-size:11px;font-family:'DM Mono',monospace;color:var(--tx2);}
+.don-bar-vals span.pct{color:var(--b);}
+.don-bar-track{height:6px;background:var(--bd);border-radius:100px;overflow:hidden;}
+.don-bar-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--b),var(--g));transition:width .5s ease;}
+
+/* TIMER */
+.timer-card{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.timer-left{display:flex;flex-direction:column;gap:4px;}
+.timer-lbl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);font-family:'DM Mono',monospace;}
+.timer-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--tx);}
+.timer-val.expired{color:var(--g);}
+.timer-note{font-size:12px;color:var(--tx3);}
+
+/* CHAIN ACTIONS */
+.chain-actions{display:flex;gap:10px;flex-wrap:wrap;}
+
+/* STAKERS DROPDOWN */
+.stakers-toggle{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--sf);border:1px solid var(--bd);border-radius:14px;cursor:pointer;font-size:13px;color:var(--tx2);transition:all var(--s);user-select:none;}
+.stakers-toggle:hover{color:var(--tx);border-color:var(--bd2);}
+.stakers-toggle .sarr{font-size:10px;margin-left:auto;transition:transform var(--s);}
+.stakers-toggle.open .sarr{transform:rotate(180deg);}
+.stakers-list{display:none;background:var(--sf);border:1px solid var(--bd);border-radius:14px;overflow:hidden;margin-top:4px;}
+.stakers-list.open{display:block;}
+.staker-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--bd);font-size:12px;}
+.staker-row:last-child{border-bottom:none;}
+.staker-num{width:20px;height:20px;border-radius:50%;background:var(--bg3);border:1px solid var(--bd2);display:flex;align-items:center;justify-content:center;font-size:9px;font-family:'DM Mono',monospace;color:var(--tx3);flex-shrink:0;}
+.staker-addr{flex:1;font-family:'DM Mono',monospace;font-size:11px;color:var(--tx2);}
+.staker-amt{font-family:'DM Mono',monospace;font-size:12px;color:var(--tx);}
+.me-badge{font-size:9px;padding:2px 6px;border-radius:4px;background:var(--bdim);color:var(--b);font-weight:700;}
+.last-badge{font-size:9px;padding:2px 6px;border-radius:4px;background:var(--gdim);color:var(--g);font-weight:700;}
+
+/* PROFILE */
+#profile-page{background:var(--bg);}
+.profile-wrap{max-width:800px;margin:0 auto;padding:32px 16px;}
+.profile-head{margin-bottom:24px;}
+.profile-head h2{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;letter-spacing:-.5px;color:var(--tx);margin-bottom:4px;}
+.profile-head p{font-size:13px;color:var(--tx2);}
+.profile-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;}
+@media(max-width:480px){.profile-sum{grid-template-columns:1fr;}}
+.ps-card{background:var(--sf);border:1px solid var(--bd);border-radius:11px;padding:14px;}
+.ps-val{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;margin-bottom:3px;}
+.ps-val.g{color:var(--g);}
+.ps-val.b{color:var(--b);}
+.ps-val.gold{color:var(--gold);}
+.ps-lbl{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px;}
+.pos-list{display:flex;flex-direction:column;gap:10px;}
+.pos-card{background:var(--sf);border:1px solid var(--bd);border-radius:13px;padding:18px;}
+.pos-card.is-last{border-color:var(--gbrd);}
+.pos-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.pos-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--tx);}
+.pos-sub{font-size:11px;color:var(--tx3);font-family:'DM Mono',monospace;margin-top:2px;}
+.pos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
+.pg-item{display:flex;flex-direction:column;gap:3px;}
+.pg-val{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;}
+.pg-val.g{color:var(--g);}
+.pg-val.gold{color:var(--gold);}
+.pg-val.b{color:var(--b);}
+.pg-lbl{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.7px;}
+.pos-profits{background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:14px;}
+.pp-title{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);font-family:'DM Mono',monospace;margin-bottom:10px;}
+.pp-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:6px 0;border-bottom:1px solid var(--bd);}
+.pp-row:last-child{border-bottom:none;}
+.pp-k{color:var(--tx2);}
+.pp-v{font-family:'DM Mono',monospace;font-weight:500;}
+.pp-v.g{color:var(--g);}
+.pp-v.b{color:var(--b);}
+.pp-v.gold{color:var(--gold);}
+.pos-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.empty-state{text-align:center;padding:56px 16px;color:var(--tx3);}
+.empty-state h3{font-size:16px;color:var(--tx2);margin-bottom:6px;}
+.empty-state p{font-size:13px;line-height:1.6;}
+.withdraw-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:100px;background:var(--gdim);border:1px solid var(--gbrd);font-size:10px;font-weight:600;color:var(--g);}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);z-index:999;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .22s;}
+.overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--sf);border:1px solid var(--bd2);border-radius:16px;width:100%;max-width:420px;max-height:88vh;overflow-y:auto;transform:translateY(14px) scale(.98);transition:transform .22s;}
+.overlay.open .modal{transform:translateY(0) scale(1);}
+.modal-head{padding:18px 18px 14px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--sf);border-radius:16px 16px 0 0;}
+.modal-head h3{font-size:15px;font-weight:600;color:var(--tx);}
+.modal-x{width:28px;height:28px;border-radius:6px;background:var(--sf2);border:1px solid var(--bd);color:var(--tx2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all var(--s);}
+.modal-x:hover{color:var(--tx);}
+.modal-body{padding:16px 18px;}
+.modal-foot{padding:12px 18px;border-top:1px solid var(--bd);display:flex;gap:8px;}
+.modal-foot .btn{flex:1;padding:10px;}
+.m-note{background:var(--gdim);border:1px solid var(--gbrd);border-radius:9px;padding:11px;margin-bottom:13px;font-size:13px;color:var(--tx2);line-height:1.5;}
+.m-note strong{color:var(--g);}
+.m-note.red{background:var(--rdim);border-color:rgba(255,59,92,.22);}
+.m-note.red strong{color:var(--red);}
+.m-rows{display:flex;flex-direction:column;margin-bottom:13px;}
+.m-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd);font-size:13px;}
+.m-row:last-child{border-bottom:none;}
+.m-k{color:var(--tx2);}
+.m-v{font-family:'DM Mono',monospace;font-weight:500;}
+.m-v.g{color:var(--g);}
+.m-v.b{color:var(--b);}
+.m-v.gold{color:var(--gold);}
+.m-v.r{color:var(--red);}
+.m-field{margin-bottom:13px;}
+.m-field label{font-size:12px;color:var(--tx2);font-weight:500;margin-bottom:7px;display:block;}
+.m-input-wrap{position:relative;}
+.m-input{width:100%;padding:10px 13px;padding-right:46px;background:var(--bg2);border:1px solid var(--bd2);border-radius:8px;color:var(--tx);font-family:'DM Mono',monospace;font-size:15px;outline:none;transition:border-color var(--s);}
+.m-input:focus{border-color:var(--g);}
+.m-suffix{position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--tx3);font-family:'DM Mono',monospace;}
+
+/* TOAST */
+.toasts{position:fixed;bottom:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:7px;}
+.toast{display:flex;align-items:center;gap:9px;padding:10px 15px;border-radius:9px;background:var(--sf2);border:1px solid var(--bd2);font-size:13px;color:var(--tx);box-shadow:0 6px 20px rgba(0,0,0,.3);min-width:230px;animation:tin .25s ease;}
+.toast.ok{border-color:var(--gbrd);}
+.toast.err{border-color:rgba(255,59,92,.3);}
+@keyframes tin{from{transform:translateX(16px);opacity:0}to{transform:translateX(0);opacity:1}}
+/* MARKETPLACE */
+.mkt-tabs{display:flex;gap:6px;margin-bottom:14px;}
+.mkt-tab{padding:6px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--bd);background:var(--sf);color:var(--tx2);transition:all var(--s);}
+.mkt-tab.on{background:var(--sf2);color:var(--tx);border-color:var(--bd2);}
+.mkt-filters{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
+.mkt-filter{padding:5px 11px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--bd);background:var(--sf);color:var(--tx3);transition:all var(--s);}
+.mkt-filter.on{background:var(--gdim);color:var(--g);border-color:var(--gbrd);}
+.mkt-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:var(--sf);border:1px solid var(--bd);border-radius:10px;margin-bottom:8px;flex-wrap:wrap;}
+.mkt-row-left{display:flex;flex-direction:column;gap:3px;}
+.mkt-row-chain{font-size:11px;font-family:'DM Mono',monospace;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px;}
+.mkt-row-price{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:var(--tx);}
+.mkt-row-profit{font-size:11px;font-family:'DM Mono',monospace;}
+.mkt-row-profit.pos{color:var(--g);}
+.mkt-row-profit.neg{color:var(--red);}
+.mkt-empty{text-align:center;padding:28px;font-size:13px;color:var(--tx3);}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<nav id="mainNav">
+  <div class="nav-i">
+    <div class="logo" onclick="goHome()">
+      <div class="lchain"><div class="lnode"></div><div class="lbar"></div><div class="lnode d"></div></div>
+      ChainStaking
+    </div>
+    <div class="nav-r">
+      <button class="nbtn" id="nPro" onclick="showPage('protocol')" style="display:none">Protocol</button>
+      <button class="nbtn" id="nProf" onclick="showPage('profile-page')" style="display:none">Profile</button>
+      <button class="nbtn" id="nTrig" onclick="showPage('trigger-page')" style="display:none">Trigger</button>
+      <button class="tbtn" id="themeBtn" onclick="toggleTheme()">🌙</button>
+      <button class="wbtn" id="walletBtn" onclick="toggleWallet()">Connect Wallet</button>
+    </div>
+  </div>
+</nav>
+
+<!-- LANDING -->
+<div class="page active" id="landing">
+  <div class="hero">
+    <div class="badge"><div class="bdot"></div>Built on Solana</div>
+    <h1>The next evolution<br>of staking on <em>Solana.</em></h1>
+    <p class="hero-sub">ChainStaking is a chain auction for Solana staking yield. Each new bid must outpace the last. The highest bidder — whether a single wallet or the community through the community pot — wins the entire yield pool. Every outbid participant earns profit from the bid spread plus a share of either the yield pool or the community pot. The first gamified staking protocol on Solana.</p>
+    <div class="hero-btns">
+      <button class="btn btn-g" onclick="goDisclaimer()">Enter Protocol →</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">How it works</button>
+    </div>
+  </div>
+  <div class="stats wrap">
+    <div class="stat-card"><div class="stat-val g" id="ls-staked">847.3</div><div class="stat-lbl">SOL Staked</div></div>
+    <div class="stat-card"><div class="stat-val" id="ls-yield">12.8400</div><div class="stat-lbl">SOL in Yield Pools</div></div>
+    <div class="stat-card"><div class="stat-val">1,247</div><div class="stat-lbl">Active Stakers</div></div>
+    <div class="stat-card"><div class="stat-val">10</div><div class="stat-lbl">Permanent Chains</div></div>
+  </div>
+  <div class="section" id="how">
+    <div class="sec-head"><h2>How it works</h2><p>A chain auction for staking yield. Everyone profits from their spread. The yield pool is up for grabs.</p></div>
+    <div class="steps">
+      <div class="step"><div class="step-n">01</div><h3>Enter a chain</h3><p>Stake your SOL into a chain where each entry is higher than the last. When the chain breaks, each entrant pays out the last and receives a share of one or two yield pools.</p></div>
+      <div class="step"><div class="step-n">02</div><h3>Break the chain</h3><p>Donate SOL to the community pot until it reaches the current entry price to automatically break the chain, or break the chain manually if you're the current leader.</p></div>
+      <div class="step"><div class="step-n">03</div><h3>Collect your rewards</h3><p>If the current leader breaks the chain, they get the yield pot to themselves. If the community breaks the chain, everyone in the chain splits the yield pot. Either way, everyone gets paid the spread.</p></div>
+      <div class="step"><div class="step-n">04</div><h3>Continue the chain</h3><p>Earn extra 0.01 SOL rewards for simply clicking buttons to run automation triggers that keep the protocol moving. Sell your position to the market if you want to exit the chain early, or buy positions being sold if you want to enter chains for less than the current entry price.</p></div>
+    </div>
+  </div>
+  <div style="text-align:center;padding:0 16px 48px;">
+    <button class="btn btn-ghost" onclick="showPage('whitepaper-page')" style="font-size:13px;gap:8px">📄 Read the Whitepaper</button>
+  </div>
+  <div class="landing-footer">
+    <button class="btn btn-g" onclick="goDisclaimer()">Enter Protocol →</button>
+    <p style="margin-top:12px;font-size:12px;color:var(--tx3)">Frozen contract · No upgrades ever · 1% fee + 0.01 SOL flat on all entries & donations · 1% fee on reward withdrawals</p>
+  </div>
+</div>
+
+<!-- WHITEPAPER -->
+<div class="page" id="whitepaper-page">
+  <div style="max-width:720px;margin:0 auto;padding:48px 20px 80px;">
+
+    <div style="margin-bottom:12px;">
+      <span style="cursor:pointer;font-size:12px;color:var(--tx3);font-family:'DM Mono',monospace;text-decoration:underline" onclick="showPage('landing')">← Back</span>
+    </div>
+
+    <!-- HEADER -->
+    <div style="margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--bd);">
+      <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:14px;">Technical Whitepaper · v3.0</div>
+      <h1 style="font-family:'Syne',sans-serif;font-size:clamp(28px,5vw,44px);font-weight:800;letter-spacing:-1.5px;line-height:1.05;margin-bottom:16px;color:var(--tx);">ChainStaking<br><span style="color:var(--g);">Protocol Specification</span></h1>
+      <p style="font-size:15px;color:var(--tx2);line-height:1.7;max-width:600px;margin-bottom:20px;">The first gamified staking protocol on Solana. A new financial primitive where the staking mechanism itself is the game — not a layer added on top of it.</p>
+      <div style="font-size:12px;color:var(--tx3);font-family:'DM Mono',monospace;margin-bottom:24px;">Built on Solana · Immutable contract · No update authority · No tokens</div>
+
+      <!-- BETA DISCLAIMER -->
+      <div style="background:rgba(255,190,11,.07);border:1px solid rgba(255,190,11,.25);border-radius:12px;padding:16px 18px;margin-bottom:0;">
+        <div style="font-size:12px;font-weight:700;color:var(--gold);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">⚠️ Beta — Work in Progress</div>
+        <p style="font-size:13px;color:var(--tx2);line-height:1.8;margin-bottom:10px;">This whitepaper is currently in beta and reflects the protocol as it is understood at the time of writing. It may not accurately reflect changes that have been made to the protocol between the time of writing and the time of release. Any necessary updates to this document may be posted on this page or communicated via official social media channels.</p>
+        <p style="font-size:13px;color:var(--tx2);line-height:1.8;">It is important to note that ChainStaking is an immutable program deployed on the Solana blockchain. The smart contract has no upgrade authority — meaning no party can modify, pause, or upgrade the on-chain logic after deployment. As a result, any "updates" to the protocol would not affect the deployed contract itself. Such updates could range from minor things such as bug fixes or UI improvements, to more significant changes such as the deployment of an entirely new program version. Participants should always verify they are interacting with the correct and intended program address.</p>
+      </div>
+    </div>
+
+    <!-- 1. ABSTRACT -->
+    <div style="margin-bottom:44px;">
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--tx);margin-bottom:6px;letter-spacing:-.5px;">1. Abstract</div>
+      <div style="width:36px;height:3px;background:var(--g);border-radius:2px;margin-bottom:18px;"></div>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;margin-bottom:14px;">ChainStaking introduces a novel staking coordination protocol on Solana in which the staking mechanism itself functions as a sequential chain auction. Unlike existing yield protocols that treat staking as passive infrastructure, ChainStaking turns each staking action into a bid — where each new participant must outbid the last, all staked SOL generates real Solana network yield, and the distribution of that yield is determined entirely by participant decisions rather than random selection or time-weighted averages.</p>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;">The result is a protocol where participation is active, outcomes are shaped by individual strategy and community coordination, and every participant has the opportunity to benefit from both their bid spread and the accumulated yield pool — without any party being able to modify, upgrade, or shut down the contract after deployment.</p>
+    </div>
+
+    <!-- 2. BACKGROUND -->
+    <div style="margin-bottom:44px;">
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--tx);margin-bottom:6px;letter-spacing:-.5px;">2. Background & Motivation</div>
+      <div style="width:36px;height:3px;background:var(--g);border-radius:2px;margin-bottom:18px;"></div>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;margin-bottom:14px;">Solana native staking provides base yield in exchange for delegating SOL to a validator. This process is entirely passive — the staker receives a proportional share of validator rewards with no ability to influence outcomes, no competitive upside, and no interaction with other participants.</p>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;margin-bottom:14px;">Prior attempts at gamifying yield — most notably PoolTogether — introduced the concept of using staking yield as a prize pool. However, these protocols gamify only the distribution of yield, not the staking process itself. The staking remains passive and unchanged. One randomly selected participant wins the yield; all others simply receive their principal back with no additional benefit from participation.</p>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;">ChainStaking takes a fundamentally different approach. It gamifies the staking process itself. The amount of SOL staked, the order in which it is staked, the timing of breaks, and the final distribution of yield are all direct outcomes of how participants choose to act. There is no separation between the staking mechanism and the game — they are one and the same.</p>
+    </div>
+
+    <!-- 3. WHAT MAKES IT NEW -->
+    <div style="margin-bottom:44px;">
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--tx);margin-bottom:6px;letter-spacing:-.5px;">3. A New Primitive</div>
+      <div style="width:36px;height:3px;background:var(--g);border-radius:2px;margin-bottom:18px;"></div>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;margin-bottom:14px;">ChainStaking introduces what can be described as a Chain Auction — a new financial structure in which sequential bidding, real yield generation, and community coordination combine into a single on-chain mechanism. This structure has not previously existed in any form.</p>
+      <div style="background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:14px;">
+        <div style="font-size:11px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);margin-bottom:14px;">How it differs from existing protocols</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:12px;">
+            <div style="background:var(--bg3);border-radius:8px;padding:12px;"><div style="color:var(--tx3);margin-bottom:6px;font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.8px;">Regular Staking</div><div style="color:var(--tx2);line-height:1.6;">Passive. Deposit SOL, earn base yield, withdraw. No strategy. No interaction. No competitive upside.</div></div>
+            <div style="background:var(--gdim);border:1px solid var(--gbrd);border-radius:8px;padding:12px;"><div style="color:var(--g);margin-bottom:6px;font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.8px;">ChainStaking</div><div style="color:var(--tx2);line-height:1.6;">Active. Every action is a bid. Yield grows with participation. Strategy determines outcomes. Community can coordinate.</div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:12px;">
+            <div style="background:var(--bg3);border-radius:8px;padding:12px;"><div style="color:var(--tx3);margin-bottom:6px;font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.8px;">PoolTogether</div><div style="color:var(--tx2);line-height:1.6;">Staking is passive infrastructure. Yield is the prize. One random winner. Everyone else gets principal back.</div></div>
+            <div style="background:var(--gdim);border:1px solid var(--gbrd);border-radius:8px;padding:12px;"><div style="color:var(--g);margin-bottom:6px;font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.8px;">ChainStaking</div><div style="color:var(--tx2);line-height:1.6;">Staking IS the game. Every participant benefits from their bid spread. No random selection. Outcomes are earned.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. PROTOCOL OVERVIEW -->
+    <div style="margin-bottom:44px;">
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--tx);margin-bottom:6px;letter-spacing:-.5px;">4. Protocol Overview</div>
+      <div style="width:36px;height:3px;background:var(--g);border-radius:2px;margin-bottom:18px;"></div>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;margin-bottom:16px;">ChainStaking deploys 10 permanent, immutable on-chain chains. Each chain has a fixed spread percentage that determines the minimum bid increment required to enter after the previous participant. Chains never close, reset, or expire — they restart immediately after each break regardless of unstaking progress.</p>
+      <div style="background:var(--sf);border:1px solid var(--bd);border-radius:12px;overflow:hidden;margin-bottom:16px;">
+        <div style="padding:11px 16px;background:var(--sf2);border-bottom:1px solid var(--bd);font-size:11px;font-family:'DM Mono',monospace;color:var(--tx3);text-transform:uppercase;letter-spacing:1px;">The 10 Permanent Chains</div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);">
+          <div style="padding:12px 14px;font-family:'DM Mono',monospace;font-size:13px;color:var(--tx);border-bottom:1px solid var(--bd);border-right:1px solid var(--bd);">5%</div>
+          <div style="padding:12px 14px;font-family:'DM Mono',monospace;font-size:13px;color:var(--tx);border-bottom:1px solid var(--bd);border-right:1px solid var(--bd);">10%</div>
+          <div style="padding:12px 14px;font-family:'DM Mono',monospace;font-size:13px;color:var(--tx);border-bottom:1px solid var(--bd);border-right:1px solid var(--bd);">25%</div>
+          <div style="padding:12px 14px;font-family:'DM Mono',monospace;font-size:13px;color:var(--tx);border-bottom:1px solid var(--bd);border-right:1px solid var(--bd);">50%</div>
+          <div style="padding:12px 14px;font-family:'DM Mono',monospace;font-size:13px;color:var(--tx);border-bottom:1px solid var(--bd);">100%</div>
+          <div style="padding:12px 14px;font-family:'DM Mono',monospace;font-size:13px;color:var(--tx);border-right:1px solid var(--bd);">250%</div>
+          <div style="padding:12px 14px;font-family:'DM Mono',monospace;font-size:13px;color:var(--tx);border-right:1px solid var(--bd);">500%</div>
+          <div style="padding:12px 14px;font-family:'DM Mono',monospace;font-size:13px;color:var(--tx);border-right:1px solid var(--bd);">1,000%</div>
+          <div style="padding:12px 14px;font-family:'DM Mono',monospace;font-size:13px;color:var(--tx);border-right:1px solid var(--bd);">5,000%</div>
+          <div style="padding:12px 14px;font-family:'DM Mono',monospace;font-size:13px;color:var(--tx);">10,000%</div>
+        </div>
+      </div>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;">All chains begin at a minimum entry of 0.01 SOL. Each subsequent entry must be at least the previous entry amount multiplied by (1 + spread%). All SOL entering the protocol — whether through chain entries or community pot donations — is staked immediately upon receipt to a validator selected by the participant from an on-chain hardcoded list of trusted validators.</p>
+    </div>
+
+    <!-- 5. ENTRY MECHANICS -->
+    <div style="margin-bottom:44px;">
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--tx);margin-bottom:6px;letter-spacing:-.5px;">5. Entry Mechanics</div>
+      <div style="width:36px;height:3px;background:var(--g);border-radius:2px;margin-bottom:18px;"></div>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;margin-bottom:14px;">Any wallet may enter any chain at any time by staking the required entry amount. The entry amount is always the previous participant's staked amount multiplied by (1 + spread%). This ensures each new bid is strictly greater than the last.</p>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;margin-bottom:14px;">The first entrant on any chain occupies a unique position: they may exit the chain and reclaim their staked SOL (minus fees) at any time, provided no other participant has entered after them. Once a second participant enters, all positions are locked until the chain breaks.</p>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;margin-bottom:14px;">A single wallet may enter the same chain multiple times, each time at the current entry price. In the edge case where a single wallet is the only participant on a chain and breaks it, they collect all proceeds from that chain as both the leader and the only earlier staker.</p>
+      <div style="background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:14px 16px;font-size:13px;color:var(--tx2);line-height:1.7;">
+        <strong style="color:var(--tx)">5-Minute Cooldown Timer.</strong> After each new entry, a 5-minute cooldown period begins. The last holder may not manually break the chain until this timer expires. This prevents participants from entering and immediately breaking the chain before others have an opportunity to respond.
+      </div>
+    </div>
+
+    <!-- 6. YIELD -->
+    <div style="margin-bottom:44px;">
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--tx);margin-bottom:6px;letter-spacing:-.5px;">6. Yield Generation</div>
+      <div style="width:36px;height:3px;background:var(--g);border-radius:2px;margin-bottom:18px;"></div>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;margin-bottom:14px;">All SOL entering the protocol — from both entries and community pot donations — is staked immediately with the validator selected by the depositing participant. However, the yield generated by each type of deposit flows to a distinct pool:</p>
+      <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+        <li style="background:var(--sf);border:1px solid var(--bd);border-radius:9px;padding:12px 14px;font-size:13px;"><span style="color:var(--tx);font-weight:600">Total yield pool:</span> <span style="color:var(--tx2)">The aggregate staking rewards generated by entry stakes only. Determined by subtracting each entry account's principal from its current staked amount. This is the prize competed for at chain break.</span></li>
+        <li style="background:var(--sf);border:1px solid var(--bd);border-radius:9px;padding:12px 14px;font-size:13px;"><span style="color:var(--tx);font-weight:600">Community pot:</span> <span style="color:var(--tx2)">Funded by direct donations AND by the staking yield those donations generate. Because donated SOL is staked immediately, the community pot grows organically over time — even without additional donations — as its staked balance accrues yield. This creates a natural, time-based pressure on the last holder.</span></li>
+        <li style="background:var(--sf);border:1px solid var(--bd);border-radius:9px;padding:12px 14px;font-size:13px;"><span style="color:var(--tx);font-weight:600">User principals:</span> <span style="color:var(--tx2)">The original staked amount for each entry. Used to determine payouts at chain break.</span></li>
+      </ul>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;">This dual-pool structure means that the longer a chain runs, the more pressure builds from two directions simultaneously — the yield pool grows larger (making it more valuable to claim), while the community pot grows on its own (moving closer to the break target without any user action required).</p>
+    </div>
+
+    <!-- 7. BREAKING THE CHAIN -->
+    <div style="margin-bottom:44px;">
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--tx);margin-bottom:6px;letter-spacing:-.5px;">7. Breaking the Chain</div>
+      <div style="width:36px;height:3px;background:var(--g);border-radius:2px;margin-bottom:18px;"></div>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;margin-bottom:20px;">A chain can be broken in one of two ways. Each results in a distinct distribution of the yield pool and community pot.</p>
+
+      <div style="margin-bottom:16px;background:var(--sf);border:1px solid var(--bd);border-radius:12px;overflow:hidden;">
+        <div style="padding:12px 16px;background:var(--rdim);border-bottom:1px solid rgba(255,59,92,.15);font-size:12px;font-weight:600;color:var(--red);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.8px;">Manual Break — Last Holder Triggers</div>
+        <div style="padding:14px 16px;font-size:13px;color:var(--tx2);line-height:1.8;">
+          Before final calculations, 1% of the yield pool is transferred to the community pot. This serves as a safeguard against a participant placing an outsized bid to monopolize the yield pool without community recourse.<br><br>
+          After this transfer:<br>
+          • The last holder collects the entire yield pool.<br>
+          • All earlier stakers receive the principal amount of the entry after them (their "spread profit").<br>
+          • The community pot is split proportionally among all earlier stakers by their staked amount.
+        </div>
+      </div>
+
+      <div style="background:var(--sf);border:1px solid var(--bd);border-radius:12px;overflow:hidden;">
+        <div style="padding:12px 16px;background:var(--gdim);border-bottom:1px solid var(--gbrd);font-size:12px;font-weight:600;color:var(--g);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.8px;">Community Break — Pot Reaches Target</div>
+        <div style="padding:14px 16px;font-size:13px;color:var(--tx2);line-height:1.8;">
+          Every donation triggers an automatic check: if the current community pot plus the incoming donation equals or exceeds the last holder's staked amount, the chain breaks immediately as part of that transaction — no separate trigger required.<br><br>
+          Upon community break:<br>
+          • The last holder receives the entire community pot (equivalent to what they would have received if someone had outbid them normally).<br>
+          • The yield pool is split proportionally among all earlier stakers by their staked amount.<br>
+          • All earlier stakers also receive the principal of the entry after them.
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. DISTRIBUTION -->
+    <div style="margin-bottom:44px;">
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--tx);margin-bottom:6px;letter-spacing:-.5px;">8. Distribution Formula</div>
+      <div style="width:36px;height:3px;background:var(--g);border-radius:2px;margin-bottom:18px;"></div>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;margin-bottom:16px;">Regardless of break type, the first entry's payout is directed to the community pot rather than to a prior participant, as no prior participant exists. This seeds the community pot from the start of every chain.</p>
+      <div style="background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:16px;font-size:13px;line-height:1.9;color:var(--tx2);">
+        <div style="margin-bottom:10px;"><span style="color:var(--tx);font-weight:600">Non-leader payout:</span> (Principal of the entrant after them) + (proportional share of either yield pool or community pot)</div>
+        <div style="margin-bottom:10px;"><span style="color:var(--tx);font-weight:600">Leader payout (manual break):</span> Entire yield pool (after 1% transfer to community pot)</div>
+        <div><span style="color:var(--tx);font-weight:600">Leader payout (community break):</span> Entire community pot</div>
+      </div>
+    </div>
+
+    <!-- 9. FEES -->
+    <div style="margin-bottom:44px;">
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--tx);margin-bottom:6px;letter-spacing:-.5px;">9. Fee Structure</div>
+      <div style="width:36px;height:3px;background:var(--g);border-radius:2px;margin-bottom:18px;"></div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:13px 15px;display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:5px;"></div>
+          <div><div style="font-size:13px;font-weight:600;color:var(--tx);margin-bottom:3px;">1% added fee on all entries and donations</div><div style="font-size:12px;color:var(--tx3);line-height:1.6;">Applied to all SOL entering the protocol. Goes to the protocol operator.</div></div>
+        </div>
+        <div style="background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:13px 15px;display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:5px;"></div>
+          <div><div style="font-size:13px;font-weight:600;color:var(--tx);margin-bottom:3px;">0.01 SOL flat fee on all entries and donations</div><div style="font-size:12px;color:var(--tx3);line-height:1.6;">This is the only SOL that is not staked. Held to fund unstaking trigger rewards for the community.</div></div>
+        </div>
+        <div style="background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:13px 15px;display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:5px;"></div>
+          <div><div style="font-size:13px;font-weight:600;color:var(--tx);margin-bottom:3px;">1% fee taken from all reward withdrawals</div><div style="font-size:12px;color:var(--tx3);line-height:1.6;">Applied when a participant withdraws their accumulated rewards. Goes to the protocol operator.</div></div>
+        </div>
+        <div style="background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:13px 15px;display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--b);flex-shrink:0;margin-top:5px;"></div>
+          <div><div style="font-size:13px;font-weight:600;color:var(--tx);margin-bottom:3px;">1% of yield pool transferred to community pot on manual break</div><div style="font-size:12px;color:var(--tx3);line-height:1.6;">Applied before final distribution calculations on manual breaks only. Protects against hostile holding strategies.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. UNSTAKING -->
+    <div style="margin-bottom:44px;">
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--tx);margin-bottom:6px;letter-spacing:-.5px;">10. Unstaking & Triggers</div>
+      <div style="width:36px;height:3px;background:var(--g);border-radius:2px;margin-bottom:18px;"></div>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;margin-bottom:14px;">When a chain breaks, all associated staking accounts must be unstaked before participants can claim their SOL. This unstaking process is open to any user — not just those who participated in the chain.</p>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;margin-bottom:14px;">Any user can trigger the unstaking of up to 5 accounts at a time. For each account unstaked, the triggering user receives 0.01 SOL immediately from the flat fee reserve. This creates a community incentive to process unstaking efficiently without requiring the protocol to do so centrally.</p>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;">New chains restart immediately after a break, regardless of unstaking progress on the previous chain. The unstaking process does not block or delay continued protocol activity.</p>
+    </div>
+
+    <!-- 11. POSITION MARKETPLACE -->
+    <div style="margin-bottom:44px;">
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--tx);margin-bottom:6px;letter-spacing:-.5px;">11. Position Marketplace</div>
+      <div style="width:36px;height:3px;background:var(--g);border-radius:2px;margin-bottom:18px;"></div>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;margin-bottom:14px;">ChainStaking includes an on-chain secondary market where participants can list their chain positions for sale at any asking price. This creates a liquid exit path for participants who wish to leave a chain before it breaks, and an alternative entry path for participants who wish to acquire a position at a negotiated price below the current chain entry cost.</p>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;margin-bottom:14px;">When a position is sold, the buyer inherits the seller's position in the chain — including its staked amount and its place in the payout order. The seller receives the agreed asking price immediately. Position listings display both estimated profit scenarios (community break and manual break) so buyers can make informed decisions before purchasing.</p>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;margin-bottom:14px;">The position marketplace also serves as a safeguard against hostile holding strategies. If a participant places an outsized bid that others cannot match, earlier stakers have the option to sell their positions for immediate liquidity rather than waiting indefinitely for a chain break. This prevents any single participant from effectively holding the chain hostage against the interests of other participants.</p>
+      <div style="background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:16px;font-size:13px;line-height:1.9;color:var(--tx2);">
+        <div style="margin-bottom:8px;"><span style="color:var(--tx);font-weight:600">For sellers:</span> List at any price. Cancel or replace a listing at any time. Proceeds are immediate upon sale.</div>
+        <div style="margin-bottom:8px;"><span style="color:var(--tx);font-weight:600">For buyers:</span> Acquire positions below current entry price. Profit estimates shown for both break scenarios before purchase.</div>
+        <div><span style="color:var(--tx);font-weight:600">For the protocol:</span> A fully liquid secondary market that operates entirely on-chain with no intermediary or custodian required.</div>
+      </div>
+    </div>
+
+    <!-- 12. COMPOUNDING -->
+    <div style="margin-bottom:44px;">
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--tx);margin-bottom:6px;letter-spacing:-.5px;">12. Compounding</div>
+      <div style="width:36px;height:3px;background:var(--g);border-radius:2px;margin-bottom:18px;"></div>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;margin-bottom:14px;">Solana natively auto-compounds staking rewards approximately every two days. Once rewards are unstaked and available, any user may additionally compound them back into the protocol manually. Compounded rewards are re-staked with a validator of the user's choosing and added to the yield pool, where they continue generating additional staking yield.</p>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;">Compounding is entirely optional and permissionless — any wallet may trigger it for any available unstaked rewards in the protocol.</p>
+    </div>
+
+    <!-- 13. VALIDATORS -->
+    <div style="margin-bottom:44px;">
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--tx);margin-bottom:6px;letter-spacing:-.5px;">13. Validator Selection</div>
+      <div style="width:36px;height:3px;background:var(--g);border-radius:2px;margin-bottom:18px;"></div>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;margin-bottom:14px;">At the time of any staking action — entry or donation — participants select a validator from a hardcoded on-chain list of trusted validators. This list is immutable after deployment and cannot be modified by any party.</p>
+      <div style="background:var(--sf);border:1px solid var(--bd);border-radius:12px;overflow:hidden;">
+        <div style="padding:11px 16px;background:var(--sf2);border-bottom:1px solid var(--bd);font-size:11px;font-family:'DM Mono',monospace;color:var(--tx3);text-transform:uppercase;letter-spacing:1px;">Approved Validators</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;">
+          <div style="padding:11px 16px;font-size:13px;color:var(--tx2);border-bottom:1px solid var(--bd);border-right:1px solid var(--bd)">Chorus One</div>
+          <div style="padding:11px 16px;font-size:13px;color:var(--tx2);border-bottom:1px solid var(--bd)">Everstake</div>
+          <div style="padding:11px 16px;font-size:13px;color:var(--tx2);border-bottom:1px solid var(--bd);border-right:1px solid var(--bd)">Figment</div>
+          <div style="padding:11px 16px;font-size:13px;color:var(--tx2);border-bottom:1px solid var(--bd)">Stakefish</div>
+          <div style="padding:11px 16px;font-size:13px;color:var(--tx2);border-bottom:1px solid var(--bd);border-right:1px solid var(--bd)">P2P.org</div>
+          <div style="padding:11px 16px;font-size:13px;color:var(--tx2);border-bottom:1px solid var(--bd)">Shinobi Systems</div>
+          <div style="padding:11px 16px;font-size:13px;color:var(--tx2);border-bottom:1px solid var(--bd);border-right:1px solid var(--bd)">GenesysGo</div>
+          <div style="padding:11px 16px;font-size:13px;color:var(--tx2);border-bottom:1px solid var(--bd)">Triton One</div>
+          <div style="padding:11px 16px;font-size:13px;color:var(--tx2);border-bottom:1px solid var(--bd);border-right:1px solid var(--bd)">Asymmetric Research</div>
+          <div style="padding:11px 16px;font-size:13px;color:var(--tx2);border-bottom:1px solid var(--bd)">YYDS Validator</div>
+          <div style="padding:11px 16px;font-size:13px;color:var(--tx2);border-bottom:1px solid var(--bd);border-right:1px solid var(--bd)">Alphasearch</div>
+          <div style="padding:11px 16px;font-size:13px;color:var(--tx2);border-bottom:1px solid var(--bd)">Pigs in Blankets</div>
+          <div style="padding:11px 16px;font-size:13px;color:var(--tx2);border-bottom:1px solid var(--bd);border-right:1px solid var(--bd)">Syncnode</div>
+          <div style="padding:11px 16px;font-size:13px;color:var(--tx2);border-bottom:1px solid var(--bd)">Vault X</div>
+          <div style="padding:11px 16px;font-size:13px;color:var(--tx2);border-right:1px solid var(--bd)">Hayek</div>
+          <div style="padding:11px 16px;font-size:13px;color:var(--tx3);font-style:italic">More to be added</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 13. IMMUTABILITY -->
+    <div style="margin-bottom:44px;">
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--tx);margin-bottom:6px;letter-spacing:-.5px;">14. Immutability & Decentralization</div>
+      <div style="width:36px;height:3px;background:var(--g);border-radius:2px;margin-bottom:18px;"></div>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;margin-bottom:14px;">The ChainStaking smart contract is deployed without update authority. Once live, it cannot be modified, paused, upgraded, or shut down by any party — including the original developers. All logic is fixed at deployment.</p>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;">This design choice is intentional. The protocol is meant to be a permanent, trustless primitive — one that participants can interact with indefinitely without reliance on any central operator.</p>
+    </div>
+
+    <!-- 14. RISKS -->
+    <div style="margin-bottom:44px;">
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--tx);margin-bottom:6px;letter-spacing:-.5px;">15. Risks & Considerations</div>
+      <div style="width:36px;height:3px;background:var(--g);border-radius:2px;margin-bottom:18px;"></div>
+      <div style="background:var(--rdim);border:1px solid rgba(255,59,92,.2);border-radius:10px;padding:14px 16px;font-size:13px;color:var(--tx2);line-height:1.8;margin-bottom:14px;">
+        <strong style="color:var(--red)">This is experimental software.</strong> Participation involves real financial risk. Use only funds you can afford to lose entirely.
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--tx2);line-height:1.7;">
+        <div style="padding:12px 14px;background:var(--sf);border:1px solid var(--bd);border-radius:9px;"><strong style="color:var(--tx)">Smart contract risk.</strong> The contract may contain bugs or vulnerabilities. It cannot be patched after deployment.</div>
+        <div style="padding:12px 14px;background:var(--sf);border:1px solid var(--bd);border-radius:9px;"><strong style="color:var(--tx)">No profit guarantees.</strong> While the protocol is designed so that spread profit accrues to non-leader participants upon chain break, this depends entirely on correct functioning of the contract and the Solana network. Nothing constitutes a promise of return.</div>
+        <div style="padding:12px 14px;background:var(--sf);border:1px solid var(--bd);border-radius:9px;"><strong style="color:var(--tx)">SOL price volatility.</strong> All values are denominated in SOL. Fiat-equivalent value may fluctuate independent of protocol outcomes.</div>
+        <div style="padding:12px 14px;background:var(--sf);border:1px solid var(--bd);border-radius:9px;"><strong style="color:var(--tx)">Not financial advice.</strong> Nothing in this whitepaper or the ChainStaking interface constitutes financial, investment, legal, or tax advice.</div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div style="padding-top:32px;border-top:1px solid var(--bd);text-align:center;">
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--tx3);letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;">ChainStaking · The first gamified staking protocol on Solana</div>
+      <button class="btn btn-g" onclick="goDisclaimer()">Enter Protocol →</button>
+      <div style="margin-top:14px;font-size:11px;color:var(--tx3)">← <span style="cursor:pointer;text-decoration:underline" onclick="showPage('landing')">Back to home</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- DISCLAIMER -->
+<div class="page" id="disclaimer">
+  <div class="dis-wrap">
+    <h2>Before you continue</h2>
+    <p class="dis-sub">Read and accept all terms before entering the ChainStaking protocol.</p>
+    <div class="dis-box">
+      <h4>1. Experimental Protocol</h4>
+      ChainStaking is a decentralized, experimental staking coordination protocol on Solana. The smart contract is immutable — once deployed it cannot be modified, upgraded, or shut down by any party.
+      <h4>2. Protocol Fee</h4>
+      ChainStaking charges fees to participate in the protocol. These fees fund protocol operations and are non-refundable. By entering the protocol you acknowledge and accept that fees will be charged and agree that all fees paid are final.
+      <h4>3. No Financial Advice</h4>
+      Nothing here constitutes financial, investment, legal, or tax advice. Participation is entirely at your own discretion and risk.
+      <h4>4. Smart Contract Risk</h4>
+      Smart contracts may contain bugs. Funds are subject to smart contract risk. Developers bear no liability for any loss of funds.
+      <h4>5. No Guarantees</h4>
+      While the protocol is designed so stakers receive their spread profit on chain break, this depends on correct functioning of the contract and Solana network.
+      <h4>6. Regulatory Compliance</h4>
+      You confirm participation does not violate any laws in your jurisdiction. You are solely responsible for tax obligations.
+      <h4>7. Not Securities</h4>
+      SOL staked through this protocol does not represent shares, equity, debt, or securities of any kind.
+      <h4>8. No Recourse</h4>
+      By entering you waive all claims against developers and contributors. All transactions are irreversible once submitted to the blockchain.
+      <h4>9. Experimental Software</h4>
+      Use only funds you can afford to lose entirely.
+    </div>
+    <div class="checks">
+      <label class="ck"><input type="checkbox" id="c1" onchange="checkAll()"><div class="ckbox"></div><div class="ck-lbl">I understand this is <strong>experimental software</strong> with smart contract risk and I use only funds I can afford to lose.</div></label>
+      <label class="ck"><input type="checkbox" id="c3" onchange="checkAll()"><div class="ckbox"></div><div class="ck-lbl">The <strong>smart contract is immutable</strong>, no party can reverse transactions, and I have no recourse for losses.</div></label>
+      <label class="ck"><input type="checkbox" id="c4" onchange="checkAll()"><div class="ckbox"></div><div class="ck-lbl">I have read all terms and enter the protocol <strong>entirely at my own risk</strong>.</div></label>
+    </div>
+    <button class="enter-btn" id="enterBtn" onclick="enterProtocol()">I Accept — Enter Protocol</button>
+    <p style="margin-top:12px;font-size:12px;color:var(--tx3);text-align:center">← <span style="cursor:pointer;text-decoration:underline" onclick="showPage('landing')">Go back</span></p>
+  </div>
+</div>
+
+<!-- PROTOCOL -->
+<div class="page" id="protocol">
+  <div class="proto-wrap">
+    <div class="proto-head">
+      <div>
+        <h2>Chain Auction</h2>
+        <div style="font-size:11px;color:var(--tx3);font-family:'DM Mono',monospace;margin-top:2px;">Frozen contract · 1% fee on stakes · No fees on withdrawals</div>
+      </div>
+      <div class="chain-selector">
+        <div class="chain-select-btn" id="chainSelectBtn" onclick="toggleChainDropdown()">
+          <span id="chainSelectLabel">5% Chain</span>
+          <span class="arr">▼</span>
+        </div>
+        <div class="chain-dropdown" id="chainDropdown"></div>
+      </div>
+    </div>
+    <div class="chain-page" id="chainPage"></div>
+  </div>
+</div>
+
+<!-- PROFILE -->
+<div class="page" id="profile-page">
+  <div class="profile-wrap">
+    <div class="profile-head"><h2>Profile</h2><p>Your positions, estimated profits, and available rewards</p></div>
+    <div class="profile-sum">
+      <div class="ps-card"><div class="ps-val b" id="ps-c">0</div><div class="ps-lbl">Open Positions</div></div>
+      <div class="ps-card"><div class="ps-val g" id="ps-p">0.0000</div><div class="ps-lbl">Est. Profit (SOL)</div></div>
+      <div class="ps-card" style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <div><div class="ps-val gold" id="ps-w">0.0000</div><div class="ps-lbl">Rewards to Withdraw</div></div>
+        <button class="btn btn-g btn-sm" onclick="withdrawRewards()" id="withdrawBtn" style="flex-shrink:0">Withdraw</button>
+      </div>
+    </div>
+    <div class="pos-list" id="posList"></div>
+  </div>
+</div>
+
+<!-- TRIGGER -->
+<div class="page" id="trigger-page">
+  <div class="profile-wrap">
+    <div class="profile-head"><h2>Trigger Unstakes</h2><p>Earn 0.01 SOL for every account you unstake.</p></div>
+    <div style="background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:16px;">
+      <div class="m-rows" style="margin-bottom:0">
+        <div class="m-row"><span class="m-k">Accounts available to unstake</span><span class="m-v g" id="triggerAvailCount">0</span></div>
+      </div>
+      <div class="m-field" style="margin-bottom:0">
+        <label>How many accounts to unstake (max 5)</label>
+        <div class="m-input-wrap">
+          <input class="m-input" type="number" id="triggerAmt" placeholder="1" min="1" max="5" step="1" oninput="updateTriggerReward()">
+          <span class="m-suffix">accts</span>
+        </div>
+      </div>
+      <div style="background:var(--gdim);border:1px solid var(--gbrd);border-radius:9px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:13px;color:var(--tx2)">Rewards you receive</span>
+        <span style="font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:var(--g)" id="triggerRewardDisplay">0.01 SOL × 0 = 0.0000 SOL</span>
+      </div>
+      <button class="btn btn-g" onclick="doTriggerUnstake()" style="width:100%">Trigger</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="overlayClick(event)">
+  <div class="modal">
+    <div class="modal-head"><h3 id="mTitle">Action</h3><div class="modal-x" onclick="closeModal()">✕</div></div>
+    <div class="modal-body" id="mBody"></div>
+    <div class="modal-foot" id="mFoot"></div>
+  </div>
+</div>
+<div class="toasts" id="toasts"></div>
+
+<script>
+const ME = '4xF8...kM2n';
+const COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
+const FEE_PCT = 0.01;       // 1% added to all entries and donations
+const FEE_FLAT = 0.01;      // 0.01 SOL flat added to all entries and donations (held for unstaking rewards)
+const WITHDRAWAL_FEE = 0.01; // 1% taken from rewards on withdrawal
+const UNSTAKE_REWARD = 0.01; // 0.01 SOL per account unstaked
+let theme = 'dark';
+let walletConnected = false;
+let currentChainId = 0;
+
+// Unstaked rewards available to compound or withdraw
+let unstakedRewards = 0.0312;
+// Staked rewards (compounded back in)
+let stakedRewards = 0.0084;
+// Broken chains pending unstaking (groups of 5)
+let pendingUnstake = [
+  { chainLabel:'10%', accounts:['9pL2...vN8q','7xK9...mR3p','8nR5...jQ2w','4xF8...kM2n','5pK2...wN6u'], id:1001 },
+  { chainLabel:'10%', accounts:['2xP5...nK8r','6mQ3...bL9s','3kM9...dR2w'], id:1002 },
+  { chainLabel:'25%', accounts:['8vN4...cP7q','3kM9...dR2w','7pJ6...eS5x','1nK8...fT3y','6mP3...gU8z'], id:1003 },
+  { chainLabel:'25%', accounts:['4vL7...hV4a'], id:1004 },
+];
+
+let myPositions = [
+  { chainId:0, staked:0.01157, profit:null, isLast:true,  posId:'p1', enteredAt: Date.now() - 6*60*1000 },
+  { chainId:1, staked:0.01210, profit:0.00121, isLast:false, posId:'p2', enteredAt: Date.now() - 2*60*60*1000 },
+  { chainId:1, staked:0.01331, profit:0.00133, isLast:false, posId:'p3', enteredAt: Date.now() - 1*60*60*1000 },
+];
+
+const CHAINS = [
+  { id:0,  spread:5,     label:'5%',     status:'active',
+    stakers:[
+      {addr:'9pL2...vN8q',staked:0.01000,profit:0.00050,last:false,me:false},
+      {addr:'7xK9...mR3p',staked:0.01050,profit:0.00053,last:false,me:false},
+      {addr:'8nR5...jQ2w',staked:0.01102,profit:0.00055,last:false,me:false},
+      {addr:ME,           staked:0.01157,profit:null,   last:true, me:true, enteredAt: Date.now()-6*60*1000},
+    ], yieldPool:0.0031, donPot:0.0048, runtime:'14d 6h', totalStaked:0.0441 },
+
+  { id:1,  spread:10,    label:'10%',    status:'hot',
+    stakers:[
+      {addr:'2xP5...nK8r',staked:0.01000,profit:0.00100,last:false,me:false},
+      {addr:'6mQ3...bL9s',staked:0.01100,profit:0.00110,last:false,me:false},
+      {addr:ME,           staked:0.01210,profit:0.00121,last:false,me:true},
+      {addr:ME,           staked:0.01331,profit:0.00133,last:false,me:true},
+      {addr:'5pK2...wN6u',staked:0.01464,profit:null,   last:true, me:false, enteredAt: Date.now()-10*60*1000},
+    ], yieldPool:0.0187, donPot:0.0092, runtime:'8d 14h', totalStaked:0.0621 },
+
+  { id:2,  spread:25,    label:'25%',    status:'active',
+    stakers:[
+      {addr:'8vN4...cP7q',staked:0.01000, profit:0.00250,last:false,me:false},
+      {addr:'3kM9...dR2w',staked:0.01250, profit:0.00313,last:false,me:false},
+      {addr:'7pJ6...eS5x',staked:0.015625,profit:null,   last:true, me:false, enteredAt: Date.now()-20*60*1000},
+    ], yieldPool:0.0092, donPot:0.0031, runtime:'3d 2h', totalStaked:0.038125 },
+
+  { id:3,  spread:50,    label:'50%',    status:'active',
+    stakers:[
+      {addr:'1nK8...fT3y',staked:0.01000,profit:0.00500,last:false,me:false},
+      {addr:'6mP3...gU8z',staked:0.01500,profit:0.00750,last:false,me:false},
+      {addr:'4vL7...hV4a',staked:0.02250,profit:null,   last:true, me:false, enteredAt: Date.now()-30*60*1000},
+    ], yieldPool:0.0143, donPot:0.0021, runtime:'1d 18h', totalStaked:0.0475 },
+
+  { id:4,  spread:100,   label:'100%',   status:'active',
+    stakers:[
+      {addr:'9kR2...iW5b',staked:0.010,profit:0.010,last:false,me:false},
+      {addr:'2mN6...jX9c',staked:0.020,profit:0.020,last:false,me:false},
+      {addr:'7pQ1...kY3d',staked:0.040,profit:null, last:true, me:false, enteredAt: Date.now()-60*60*1000},
+    ], yieldPool:0.0284, donPot:0.0087, runtime:'5d 11h', totalStaked:0.070 },
+
+  { id:5,  spread:250,   label:'250%',   status:'active',
+    stakers:[
+      {addr:'5vM4...lZ7e',staked:0.010,profit:0.025,last:false,me:false},
+      {addr:'3nP8...mA2f',staked:0.035,profit:null, last:true, me:false, enteredAt: Date.now()-2*60*60*1000},
+    ], yieldPool:0.0031, donPot:0.0, runtime:'12h 4m', totalStaked:0.045 },
+
+  { id:6,  spread:500,   label:'500%',   status:'empty',
+    stakers:[
+      {addr:'8kL5...nB6g',staked:0.010,profit:null,last:true,me:false, enteredAt: Date.now()-3*60*60*1000},
+    ], yieldPool:0.00041, donPot:0.0, runtime:'2h 17m', totalStaked:0.010 },
+
+  { id:7,  spread:1000,  label:'1000%',  status:'empty',  stakers:[], yieldPool:0, donPot:0, runtime:'—', totalStaked:0 },
+  { id:8,  spread:5000,  label:'5000%',  status:'empty',  stakers:[], yieldPool:0, donPot:0, runtime:'—', totalStaked:0 },
+
+  { id:9,  spread:10000, label:'10000%', status:'whale',
+    stakers:[
+      {addr:'1vK9...oC3h',staked:0.010,  profit:1.000,  last:false,me:false},
+      {addr:'6mR2...pD8i',staked:1.010,  profit:101.00, last:false,me:false},
+      {addr:'4nQ7...qE5j',staked:102.01, profit:null,   last:true, me:false, enteredAt: Date.now()-24*60*60*1000},
+    ], yieldPool:4.821, donPot:12.4, runtime:'22d 3h', totalStaked:103.031 },
+];
+
+// Position marketplace listings
+// { id, chainId, posId, seller, askPrice, staked, profit, chainLabel, listedAt }
+let listings = [
+  { id:'l1', chainId:0, posId:'px1', seller:'7xK9...mR3p', askPrice:0.0110, staked:0.01000, profit:0.00050, chainLabel:'5%',   listedAt: Date.now()-22*60*1000 },
+  { id:'l2', chainId:0, posId:'px2', seller:'9pL2...vN8q', askPrice:0.0120, staked:0.01050, profit:0.00053, chainLabel:'5%',   listedAt: Date.now()-5*60*1000  },
+  { id:'l3', chainId:1, posId:'px3', seller:'8nR5...jQ2w', askPrice:0.0135, staked:0.01210, profit:0.00121, chainLabel:'10%',  listedAt: Date.now()-8*60*1000  },
+  { id:'l4', chainId:1, posId:'px4', seller:'2xP5...nK8r', askPrice:0.0160, staked:0.01331, profit:0.00133, chainLabel:'10%',  listedAt: Date.now()-3*60*1000  },
+  { id:'l5', chainId:2, posId:'px5', seller:'6mQ3...bL9s', askPrice:0.0190, staked:0.01250, profit:0.00313, chainLabel:'25%',  listedAt: Date.now()-15*60*1000 },
+  { id:'l6', chainId:3, posId:'px6', seller:'3kM9...dR2w', askPrice:0.0170, staked:0.01000, profit:0.00500, chainLabel:'50%',  listedAt: Date.now()-30*60*1000 },
+  { id:'l7', chainId:4, posId:'px7', seller:'5vM4...lZ7e', askPrice:0.0250, staked:0.01000, profit:0.01000, chainLabel:'100%', listedAt: Date.now()-45*60*1000 },
+];
+let mktFilter = 'recent'; // 'recent' | 'chain' | 'profit'
+let mktTab = 'all'; // 'all' | 'mine'
+function fmt(n,d=4){ return Number(n).toFixed(d); }
+function nextStake(c){ return c.stakers.length ? c.stakers[c.stakers.length-1].staked*(1+c.spread/100) : 0.01; }
+function entryRequired(c){ return nextStake(c)*(1+FEE_PCT) + FEE_FLAT; }
+function entryStaked(c){ return nextStake(c); } // actual staked amount (excl fees)
+function donateRequired(amt){ return parseFloat((amt*(1+FEE_PCT) + FEE_FLAT).toFixed(8)); } // what user pays to donate amt
+function nextProfit(c){ return entryRequired(c)*(c.spread/100); }
+// For a NEW entrant: their share of yield pool (community break) or donation pot (manual break) based on their stake vs total
+function newEntrantYieldShare(c){ 
+  const ns = nextStake(c);
+  const newTotal = c.totalStaked + ns;
+  return newTotal>0 ? c.yieldPool*(ns/newTotal) : 0;
+}
+function newEntrantDonShare(c){
+  const ns = nextStake(c);
+  const newTotal = c.totalStaked + ns;
+  return newTotal>0 ? c.donPot*(ns/newTotal) : 0;
+}
+function donPct(c){ return c.stakers.length ? Math.min((c.donPot/c.stakers[c.stakers.length-1].staked)*100,100):0; }
+function isMeLast(c){ return c.stakers.length>0 && c.stakers[c.stakers.length-1].me; }
+function hasMe(c){ return c.stakers.some(s=>s.me); }
+function myYieldShare(c){
+  if(!c.stakers.length || !c.totalStaked) return 0;
+  const myTotal = c.stakers.filter(s=>s.me).reduce((a,s)=>a+s.staked,0);
+  return c.yieldPool * (myTotal/c.totalStaked);
+}
+function timerExpired(c){
+  if(!c.stakers.length) return true;
+  const last = c.stakers[c.stakers.length-1];
+  if(!last.enteredAt) return true;
+  return Date.now() - last.enteredAt >= COOLDOWN_MS;
+}
+function timerRemaining(c){
+  if(!c.stakers.length) return 0;
+  const last = c.stakers[c.stakers.length-1];
+  if(!last.enteredAt) return 0;
+  return Math.max(0, COOLDOWN_MS - (Date.now()-last.enteredAt));
+}
+function fmtTimer(ms){
+  if(ms<=0) return 'Expired';
+  const m=Math.floor(ms/60000), s=Math.floor((ms%60000)/1000);
+  return `${m}:${String(s).padStart(2,'0')}`;
+}
+function statusCls(s){ return {active:'cp-active',hot:'cp-hot',empty:'cp-empty',whale:'cp-whale'}[s]||'cp-empty'; }
+
+/* ── THEME ── */
+function toggleTheme(){
+  theme=theme==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',theme);
+  document.getElementById('themeBtn').textContent=theme==='dark'?'🌙':'☀️';
+}
+
+/* ── PAGES ── */
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  const inApp=['protocol','profile-page','trigger-page'].includes(id);
+  document.getElementById('nPro').style.display=inApp?'':'none';
+  document.getElementById('nProf').style.display=inApp?'':'none';
+  document.getElementById('nTrig').style.display=inApp?'':'none';
+  document.getElementById('nPro').className='nbtn'+(id==='protocol'?' on':'');
+  document.getElementById('nProf').className='nbtn'+(id==='profile-page'?' on':'');
+  document.getElementById('nTrig').className='nbtn'+(id==='trigger-page'?' on':'');
+  if(id==='protocol'){ buildChainDropdown(); renderChainPage(); startTimerTick(); }
+  if(id==='profile-page') renderProfile();
+  if(id==='trigger-page') renderTriggerPage();
+}
+function goHome(){ showPage('landing'); }
+function goDisclaimer(){ showPage('disclaimer'); }
+function enterProtocol(){ showPage('protocol'); toast('Welcome to ChainStaking','ok'); }
+
+function checkAll(){
+  const all=['c1','c3','c4'].every(id=>document.getElementById(id).checked);
+  document.getElementById('enterBtn').classList.toggle('ready',all);
+}
+
+/* ── WALLET ── */
+function toggleWallet(){
+  walletConnected=!walletConnected;
+  const b=document.getElementById('walletBtn');
+  if(walletConnected){ b.className='wbtn on'; b.innerHTML=`<div class="wdot"></div>${ME}`; toast('Wallet connected','ok'); }
+  else{ b.className='wbtn'; b.innerHTML='Connect Wallet'; }
+  renderChainPage(); renderProfile();
+}
+
+/* ── CHAIN DROPDOWN ── */
+function buildChainDropdown(){
+  const dd=document.getElementById('chainDropdown');
+  dd.innerHTML=CHAINS.map(c=>`
+    <div class="chain-opt${c.id===currentChainId?' active':''}" onclick="selectChain(${c.id})">
+      <span>${c.label}</span>
+      <span class="chain-opt-status" style="background:${{active:'rgba(0,255,135,.1)',hot:'rgba(255,190,11,.1)',empty:'rgba(255,255,255,.05)',whale:'rgba(185,124,255,.1)'}[c.status]||'rgba(255,255,255,.05)'};color:${{active:'#00ff87',hot:'#ffbe0b',empty:'#303f52',whale:'#b97cff'}[c.status]||'#303f52'}">${{active:'Active',hot:'Hot',empty:'Waiting',whale:'Whale'}[c.status]||'Waiting'}</span>
+    </div>`).join('');
+}
+
+function toggleChainDropdown(){
+  const btn=document.getElementById('chainSelectBtn');
+  const dd=document.getElementById('chainDropdown');
+  btn.classList.toggle('open');
+  dd.classList.toggle('open');
+}
+
+function selectChain(id){
+  currentChainId=id;
+  document.getElementById('chainSelectLabel').textContent=CHAINS[id].label+' Chain';
+  document.getElementById('chainSelectBtn').classList.remove('open');
+  document.getElementById('chainDropdown').classList.remove('open');
+  buildChainDropdown();
+  renderChainPage();
+}
+
+/* ── CHAIN PAGE ── */
+function renderChainPage(){
+  const chain=CHAINS[currentChainId];
+  const page=document.getElementById('chainPage');
+  const ns=nextStake(chain);
+  const er=entryRequired(chain);
+  const np=nextProfit(chain);
+  const lastS=chain.stakers.length?chain.stakers[chain.stakers.length-1]:null;
+  const pct=donPct(chain);
+  const meLast=isMeLast(chain);
+  const expired=timerExpired(chain);
+  const remaining=timerRemaining(chain);
+  const myShare=myYieldShare(chain);
+  const isFirstOnly = chain.stakers.length===1 && chain.stakers[0].me;
+  const yieldShareNew = newEntrantYieldShare(chain);
+  const donShareNew   = newEntrantDonShare(chain);
+  const profitIfCommunity = np + yieldShareNew;
+  const profitIfManual    = np + donShareNew;
+
+  page.innerHTML=`
+    <!-- CHAIN VISUALIZATION -->
+    <div class="info-card" style="padding:14px 16px;">
+      <div class="info-card-title" style="margin-bottom:10px;">Chain Progression</div>
+      <div style="overflow-x:auto;padding-bottom:6px;" id="chainVizScroll">
+        <div style="display:flex;align-items:flex-end;gap:0;min-width:max-content;padding:4px 4px 0;">
+          ${chain.stakers.map((s,i)=>{
+            const entryPrice = parseFloat((s.staked*(1+FEE_PCT)+FEE_FLAT).toFixed(4));
+            return `<div style="display:flex;align-items:center;">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+                <div style="width:${s.last?40:32}px;height:${s.last?40:32}px;border-radius:50%;border:2px solid ${s.last?'var(--g)':s.me?'var(--b)':'var(--bd2)'};background:${s.last?'rgba(0,255,135,.1)':s.me?'rgba(0,194,255,.07)':'var(--bg3)'};display:flex;align-items:center;justify-content:center;font-size:${s.last?10:9}px;font-family:'DM Mono',monospace;color:${s.last?'var(--g)':s.me?'var(--b)':'var(--tx3)'};box-shadow:${s.last?'0 0 12px rgba(0,255,135,.3)':'none'};flex-shrink:0;">${s.last?'★':s.me?'ME':i+1}</div>
+                <div style="font-size:9px;font-family:'DM Mono',monospace;color:var(--tx3);white-space:nowrap">${fmt(entryPrice,3)}</div>
+              </div>
+              <div style="width:20px;height:2px;background:${s.last?'rgba(0,255,135,.3)':'var(--bd2)'};flex-shrink:0;margin-bottom:14px;"></div>
+            </div>`;
+          }).join('')}
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div style="width:32px;height:32px;border-radius:50%;border:2px dashed var(--tx3);background:transparent;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--tx3);flex-shrink:0;">${chain.stakers.length+1}</div>
+            <div style="font-size:9px;font-family:'DM Mono',monospace;color:var(--tx3);white-space:nowrap">${fmt(er,3)}</div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:10px;color:var(--tx3);margin-top:6px;">scroll → to explore · ★ current holder · dashed = next open position</div>
+    </div>
+
+    <!-- ENTRY CARD -->
+    <div class="entry-card">
+      <div class="entry-card-title">Entry</div>
+      <div class="entry-flow">
+        <div class="entry-box">
+          <div class="entry-box-lbl">Cost to Enter</div>
+          <div class="entry-box-val">${fmt(er)} SOL</div>
+        </div>
+        <div class="entry-arrow">→</div>
+        <div class="entry-box">
+          <div class="entry-box-lbl">Est. Profit</div>
+          <div class="entry-box-val g" style="font-size:13px;line-height:1.4;">+${fmt(profitIfCommunity)} SOL<br><span style="color:var(--tx3);font-size:10px">or</span><br>+${fmt(profitIfManual)} SOL</div>
+        </div>
+      </div>
+      <div class="profit-breakdown">
+        <div class="pb-title">Profit Breakdown</div>
+        <div class="pb-row" style="flex-direction:column;align-items:flex-start;gap:3px;">
+          <div style="display:flex;justify-content:space-between;width:100%"><span class="pb-key">If community break</span><span class="pb-val b">+${fmt(profitIfCommunity)} SOL</span></div>
+          <div style="font-size:10px;color:var(--tx3)">spread ${fmt(np)} + yield share ${fmt(yieldShareNew)}</div>
+        </div>
+        <div class="pb-row" style="flex-direction:column;align-items:flex-start;gap:3px;">
+          <div style="display:flex;justify-content:space-between;width:100%"><span class="pb-key">If manual break</span><span class="pb-val gold">+${fmt(profitIfManual)} SOL</span></div>
+          <div style="font-size:10px;color:var(--tx3)">spread ${fmt(np)} + pot share ${fmt(donShareNew)}</div>
+        </div>
+      </div>
+      <div class="chain-actions">
+        <button class="btn btn-g" onclick="openEnter(${chain.id})" ${!walletConnected?'disabled':''}>Enter — ${fmt(er)} SOL</button>
+        ${chain.stakers.length?`<button class="btn btn-ghost btn-sm" onclick="openDonate(${chain.id})" ${!walletConnected?'disabled':''}>Donate</button>`:''}
+        ${meLast&&expired?`<button class="btn btn-red btn-sm" onclick="openBreak(${chain.id})">Break the Chain</button>`:''}
+        ${pct>=100&&lastS&&!meLast?`<button class="btn btn-red btn-sm" onclick="openBreak(${chain.id})" ${!walletConnected?'disabled':''}>Break the Chain</button>`:''}
+        ${isFirstOnly?`<button class="btn btn-ghost btn-sm" onclick="exitChain(${chain.id})" ${!walletConnected?'disabled':''}>Exit & Refund</button>`:''}
+      </div>
+    </div>
+
+    <!-- YIELD + BOUNTY -->
+    <div class="two-col">
+      <div class="info-card">
+        <div class="info-card-title">Yield Pool 🏆</div>
+        <div class="info-card-val g">${fmt(chain.yieldPool)} SOL</div>
+        <div class="info-card-sub">Accumulated staking yield from all entries and donations. Manual break: last holder takes all (after 1% to community pot). Community break: splits proportionally to all stakers.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-title">Community Pot</div>
+        <div class="info-card-val b">${fmt(chain.donPot)} SOL</div>
+        <div class="don-bar-wrap">
+          <div class="don-bar-top">
+            <span class="don-bar-lbl">Target: ${fmt(lastS?lastS.staked:0.01)} SOL</span>
+            <span class="don-bar-vals"><span class="pct">${pct.toFixed(0)}%</span></span>
+          </div>
+          <div class="don-bar-track"><div class="don-bar-fill" style="width:${pct}%"></div></div>
+        </div>
+        <div class="info-card-sub" style="margin-top:8px">All donations are staked immediately. When pot hits the last holder's stake amount, chain auto-breaks. Last holder gets donation pot. Community splits yield pool.</div>
+      </div>
+    </div>
+    ${pct>=100&&lastS?`<div style="background:rgba(255,59,92,.06);border:1px solid rgba(255,59,92,.2);border-radius:11px;padding:10px 14px;font-size:12px;color:var(--red)">⚡ Community pot has reached target — Break the Chain button is now available to all users above.</div>`:''}
+
+    <!-- TIMER -->
+    ${chain.stakers.length?`
+    <div class="timer-card">
+      <div class="timer-left">
+        <div class="timer-lbl">5-Minute Cooldown Timer</div>
+        <div class="timer-val${expired?' expired':''}" id="timerVal">${expired?'Expired — Break available':fmtTimer(remaining)}</div>
+        <div class="timer-note">${expired?'Last holder can now manually break the chain':'Timer must expire before manual break is allowed'}</div>
+      </div>
+      ${meLast&&!expired?`<div style="font-size:12px;color:var(--tx3);text-align:right">Waiting for<br>timer to expire</div>`:''}
+    </div>`:''}
+
+    <!-- CHAIN INFO -->
+    <div class="info-card">
+      <div class="info-card-title">Chain Info</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="pg-item"><div class="pg-val">${chain.stakers.length}</div><div class="pg-lbl">Total Entrants</div></div>
+        <div class="pg-item"><div class="pg-val">${fmt(chain.totalStaked)} SOL</div><div class="pg-lbl">Total Staked</div></div>
+        <div class="pg-item"><div class="pg-val">${chain.runtime}</div><div class="pg-lbl">Running</div></div>
+        <div class="pg-item"><div class="pg-val">${chain.label}</div><div class="pg-lbl">Spread</div></div>
+      </div>
+    </div>
+
+    <!-- STAKERS DROPDOWN -->
+    ${chain.stakers.length?`
+    <div class="stakers-toggle" onclick="toggleStakers()" id="stakersToggle">
+      <span>View all entrants (${chain.stakers.length})</span>
+      <span class="sarr">▼</span>
+    </div>
+    <div class="stakers-list" id="stakersList">
+      ${chain.stakers.map((s,i)=>`
+      <div class="staker-row">
+        <div class="staker-num">${i+1}</div>
+        <div class="staker-addr">${s.addr}</div>
+        ${s.me?`<span class="me-badge">YOU</span>`:''}
+        ${s.last?`<span class="last-badge">HOLDING</span>`:''}
+        <div class="staker-amt">${fmt(s.staked)} SOL</div>
+      </div>`).join('')}
+    </div>`:'<div style="text-align:center;padding:20px;color:var(--tx3);font-size:13px;background:var(--sf);border:1px solid var(--bd);border-radius:14px">No entrants yet — be the first for '+fmt(entryRequired(chain))+' SOL</div>'}
+
+    <!-- MARKETPLACE -->
+    <div class="info-card" style="margin-top:4px">
+      <div class="info-card-title" style="margin-bottom:12px">Positions for Sale</div>
+      <div class="mkt-tabs">
+        <div class="mkt-tab${mktTab==='all'?' on':''}" onclick="setMktTab('all')">All Listings</div>
+        <div class="mkt-tab${mktTab==='mine'?' on':''}" onclick="setMktTab('mine')">My Listings</div>
+      </div>
+      <div class="mkt-filters">
+        <div class="mkt-filter${mktFilter==='recent'?' on':''}" onclick="setMktFilter('recent')">Most Recent</div>
+        <div class="mkt-filter${mktFilter==='chain'?' on':''}" onclick="setMktFilter('chain')">By Chain Order</div>
+        <div class="mkt-filter${mktFilter==='profit'?' on':''}" onclick="setMktFilter('profit')">Most Profitable</div>
+      </div>
+      <div id="mktList">${buildMktList(chain.id)}</div>
+    </div>
+  `;
+  setTimeout(()=>{
+    const viz=document.getElementById('chainVizScroll');
+    if(viz) viz.scrollLeft=viz.scrollWidth;
+  },50);
+}
+
+function toggleStakers(){
+  const t=document.getElementById('stakersToggle');
+  const l=document.getElementById('stakersList');
+  if(t&&l){ t.classList.toggle('open'); l.classList.toggle('open'); }
+}
+
+/* ── TIMER TICK ── */
+let timerInterval=null;
+function startTimerTick(){
+  if(timerInterval) clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{
+    const el=document.getElementById('timerVal');
+    if(!el) return;
+    const chain=CHAINS[currentChainId];
+    const expired=timerExpired(chain);
+    const remaining=timerRemaining(chain);
+    el.textContent=expired?'Expired — Break available':fmtTimer(remaining);
+    el.className='timer-val'+(expired?' expired':'');
+    if(expired) clearInterval(timerInterval);
+  },1000);
+}
+
+/* ── PROFILE ── */
+function renderProfile(){
+  const list=document.getElementById('posList');
+  list.innerHTML='';
+  const totalProfit=myPositions.reduce((a,p)=>a+(p.profit||0),0);
+  document.getElementById('ps-c').textContent=myPositions.length;
+  document.getElementById('ps-p').textContent=fmt(totalProfit);
+  const withdrawable=myPositions.filter(p=>!p.isLast).reduce((a,p)=>a+(p.profit||0),0);
+  document.getElementById('ps-w').textContent=fmt(withdrawable);
+  // Update rewards
+  const sr=document.getElementById('prof-staked-rewards');
+  const ur=document.getElementById('prof-unstaked-rewards');
+  const cr=document.getElementById('compoundRow');
+  if(sr) sr.textContent=fmt(stakedRewards);
+  if(ur) ur.textContent=fmt(unstakedRewards);
+  if(cr) cr.style.display=unstakedRewards>0?'block':'none';
+  renderUnstakePage();
+  if(!myPositions.length){
+    list.innerHTML=`<div class="empty-state"><h3>No positions yet</h3><p>Enter a chain in the Protocol page to get started.</p></div>`;
+    return;
+  }
+  myPositions.forEach(pos=>{
+    const chain=CHAINS[pos.chainId];
+    if(!chain) return;
+    const card=document.createElement('div');
+    card.className=`pos-card${pos.isLast?' is-last':''}`;
+    const myStakeShare=chain.totalStaked>0?pos.staked/chain.totalStaked:0;
+    const estYieldShare=chain.yieldPool*myStakeShare;
+    card.innerHTML=`
+      <div class="pos-top">
+        <div>
+          <div class="pos-name">${chain.label} Spread Chain</div>
+          <div class="pos-sub">${chain.runtime} running · ${chain.stakers.length} entrants · pos ${pos.posId}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          ${pos.isLast?`<span class="last-badge">HOLDING LAST CLAIM</span>`:''}
+          ${!pos.isLast&&pos.profit?`<span class="withdraw-badge">⚡ Profit Available</span>`:''}
+        </div>
+      </div>
+      <div class="pos-grid">
+        <div class="pg-item"><div class="pg-val">${fmt(pos.staked)} SOL</div><div class="pg-lbl">You Staked</div></div>
+        <div class="pg-item"><div class="pg-val g">+${fmt(pos.profit||0)} SOL</div><div class="pg-lbl">Est. Spread Profit</div></div>
+        <div class="pg-item"><div class="pg-val gold">${fmt(chain.yieldPool)} SOL</div><div class="pg-lbl">Current Yield Pool</div></div>
+        <div class="pg-item"><div class="pg-val b">${fmt(chain.donPot)} SOL</div><div class="pg-lbl">Community Pot</div></div>
+      </div>
+      <div class="pos-profits">
+        <div class="pp-title">Your Estimated Profits at Break</div>
+        <div class="pp-row"><span class="pp-k">Floor (spread profit)</span><span class="pp-v g">+${fmt(pos.profit||0)} SOL</span></div>
+        ${!pos.isLast?`
+        <div class="pp-row"><span class="pp-k">Community Break (+ yield share)</span><span class="pp-v b">+${fmt((pos.profit||0)+estYieldShare)} SOL</span></div>
+        <div class="pp-row"><span class="pp-k">Manual Break (+ community pot share)</span><span class="pp-v gold">+${fmt((pos.profit||0)+(chain.donPot*myStakeShare))} SOL</span></div>
+        `:`
+        <div class="pp-row"><span class="pp-k">If YOU break manually</span><span class="pp-v gold">${fmt(chain.yieldPool)} SOL (entire yield pool)</span></div>
+        <div class="pp-row"><span class="pp-k">If community breaks</span><span class="pp-v b">${fmt(chain.donPot)} SOL (donation pot paid to you)</span></div>
+        `}
+      </div>
+      <div class="pos-actions">
+        <button class="btn btn-ghost btn-sm" onclick="selectChain(${chain.id});showPage('protocol')">View Chain</button>
+        <button class="btn btn-ghost btn-sm" onclick="openDonate(${chain.id})" ${!walletConnected?'disabled':''}>Donate</button>
+        <button class="btn btn-ghost btn-sm" onclick="openSell('${pos.posId}')">Sell</button>
+        ${pos.isLast&&timerExpired(chain)?`<button class="btn btn-red btn-sm" onclick="openBreak(${chain.id})">Break the Chain</button>`:''}
+        ${pos.isLast&&!timerExpired(chain)?`<button class="btn btn-ghost btn-sm" disabled>Break in ${fmtTimer(timerRemaining(chain))}</button>`:''}
+      </div>`;
+    list.appendChild(card);
+  });
+}
+
+/* ── VALIDATORS ── */
+const VALIDATORS = [
+  'Asymmetric Research',
+  'YYDS Validator',
+  'Alphasearch',
+  'Pigs in Blankets',
+  'Syncnode',
+  'Vault X',
+  'Hayek',
+];
+
+function validatorSelectHTML(){
+  return `<div class="m-field" style="margin-top:4px">
+    <label>Validator</label>
+    <select class="m-input" id="validatorSelect" style="cursor:pointer;appearance:auto">
+      ${VALIDATORS.map((v,i)=>`<option value="${v}"${i===0?' selected':''}>${v}</option>`).join('')}
+    </select>
+  </div>`;
+}
+
+/* ── MODALS ── */
+function openEnter(chainId){
+  const chain=CHAINS[chainId];
+  const ns=nextStake(chain),er=entryRequired(chain),fee=ns*FEE_PCT,np=nextProfit(chain);
+  document.getElementById('mTitle').textContent=`Enter ${chain.label} Chain`;
+  document.getElementById('mBody').innerHTML=`
+    <div class="m-note"><strong>Payouts only happen when the chain breaks.</strong> Your estimated profit is ${chain.spread}% of your stake. Nothing is confirmed until someone enters after you.</div>
+    <div class="m-rows">
+      <div class="m-row"><span class="m-k">Minimum to enter</span><span class="m-v g">${fmt(er)} SOL</span></div>
+      <div class="m-row"><span class="m-k">Your stake (excl. fees)</span><span class="m-v">${fmt(ns)} SOL</span></div>
+      <div class="m-row"><span class="m-k">1% protocol fee</span><span class="m-v gold">${fmt(fee,4)} SOL</span></div>
+      <div class="m-row"><span class="m-k">0.01 SOL flat fee (unstaking rewards)</span><span class="m-v gold">0.0100 SOL</span></div>
+      <div class="m-row"><span class="m-k">Est. Profit Floor</span><span class="m-v g">+${fmt(np)} SOL (${chain.spread}%)</span></div>
+    </div>
+    <div class="m-field">
+      <label>Amount to stake (SOL) — minimum ${fmt(er)} SOL</label>
+      <div class="m-input-wrap"><input class="m-input" type="number" id="eAmt" placeholder="${fmt(er)}" step="0.0001" min="${fmt(er)}"><span class="m-suffix">SOL</span></div>
+    </div>
+    ${validatorSelectHTML()}`;
+  document.getElementById('mFoot').innerHTML=`
+    <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-g" onclick="doEnter(${chainId})">Enter — ${fmt(er)} SOL</button>`;
+  openModal();
+}
+
+function openDonate(chainId){
+  const chain=CHAINS[chainId];
+  const lastS=chain.stakers[chain.stakers.length-1];
+  const target=lastS?lastS.staked:0.01;
+  const rem=Math.max(0,target-chain.donPot);
+  const pct=donPct(chain);
+  document.getElementById('mTitle').textContent=`Donate — ${chain.label}`;
+  document.getElementById('mBody').innerHTML=`
+    <div class="m-note">All donations are staked immediately. Once the pot reaches the target the chain auto-breaks. Community splits the yield pool. Last holder gets the donation pot.</div>
+    <div class="m-rows" style="margin-bottom:14px">
+      <div class="m-row"><span class="m-k">Current community pot</span><span class="m-v b">${fmt(chain.donPot)} SOL</span></div>
+      <div class="m-row"><span class="m-k">Target (last holder's stake)</span><span class="m-v">${fmt(target)} SOL</span></div>
+      <div class="m-row"><span class="m-k">Remaining to auto-break</span><span class="m-v r">${fmt(rem)} SOL</span></div>
+      <div class="m-row"><span class="m-k">Fees added</span><span class="m-v gold">1% + 0.01 SOL flat</span></div>
+    </div>
+    <div class="don-bar-track" style="margin-bottom:16px"><div class="don-bar-fill" style="width:${pct}%"></div></div>
+    <div class="m-field">
+      <label>Amount to donate (SOL) — fees added on top</label>
+      <div class="m-input-wrap"><input class="m-input" type="number" id="dAmt" placeholder="0.0000" step="0.0001" min="0.0001"><span class="m-suffix">SOL</span></div>
+    </div>
+    ${validatorSelectHTML()}`;
+  document.getElementById('mFoot').innerHTML=`
+    <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-g" onclick="submitDonate(${chainId})">Donate</button>`;
+  openModal();
+}
+
+function openBreak(chainId){
+  const chain=CHAINS[chainId];
+  const pct=donPct(chain);
+  // Community break path
+  if(pct>=100 && !isMeLast(chain)){
+    openCommunityBreak(chainId);
+    return;
+  }
+  // Manual break path
+  const yieldAfterFee = chain.yieldPool * 0.99;
+  const feeToBot = chain.yieldPool * 0.01;
+  const donAfterFee = chain.donPot + feeToBot;
+  document.getElementById('mTitle').textContent=`Break the Chain — ${chain.label}`;
+  document.getElementById('mBody').innerHTML=`
+    <div class="m-note red"><strong>Irreversible.</strong> 1% of the yield pool moves to the community pot first, then you collect the remaining yield pool. Community pot splits to earlier stakers.</div>
+    <div class="m-rows">
+      <div class="m-row"><span class="m-k">Community pot splits to earlier stakers</span><span class="m-v b">${fmt(donAfterFee)} SOL</span></div>
+      <div class="m-row"><span class="m-k">1% withdrawal fee on your yield</span><span class="m-v gold">${fmt(yieldAfterFee*0.01,4)} SOL</span></div>
+      <div class="m-row"><span class="m-k">You receive (after withdrawal fee)</span><span class="m-v g">${fmt(yieldAfterFee*0.99)} SOL</span></div>
+    </div>`;
+  document.getElementById('mFoot').innerHTML=`
+    <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-red" onclick="doBreak(${chainId})">Break the Chain</button>`;
+  openModal();
+}
+
+function openCommunityBreak(chainId){
+  const chain=CHAINS[chainId];
+  const yieldAfterFee = chain.yieldPool * 0.99; // 1% withdrawal fee on yield
+  const pot = chain.donPot;
+  const lastS = chain.stakers[chain.stakers.length-1];
+  document.getElementById('mTitle').textContent=`Break the Chain — ${chain.label}`;
+  document.getElementById('mBody').innerHTML=`
+    <div class="m-note red"><strong>Irreversible.</strong> Community pot has reached its target. Last holder receives the entire community pot. Yield pool splits proportionally to all earlier stakers (minus 1% withdrawal fee).</div>
+    <div class="m-rows">
+      <div class="m-row"><span class="m-k">Last holder receives (community pot)</span><span class="m-v b">${fmt(pot)} SOL</span></div>
+      <div class="m-row"><span class="m-k">1% withdrawal fee</span><span class="m-v gold">${fmt(chain.yieldPool*0.01,4)} SOL</span></div>
+      <div class="m-row"><span class="m-k">You receive (yield pool split + spread)</span><span class="m-v g">${fmt(yieldAfterFee/Math.max(chain.stakers.length,1) + (chain.stakers.find(s=>s.me)?.profit||0))} SOL</span></div>
+    </div>`;
+  document.getElementById('mFoot').innerHTML=`
+    <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-red" onclick="triggerCommunityBreak(${chainId})">Break the Chain</button>`;
+  openModal();
+}
+
+function openModal(){ document.getElementById('overlay').classList.add('open'); }
+function closeModal(){ document.getElementById('overlay').classList.remove('open'); }
+function overlayClick(e){ if(e.target===document.getElementById('overlay')) closeModal(); }
+
+/* ── ACTIONS ── */
+function doEnter(chainId){
+  if(!walletConnected){ toast('Connect wallet first','err'); return; }
+  const chain=CHAINS[chainId];
+  const er=entryRequired(chain);
+  const input=document.getElementById('eAmt');
+  const amt=input?parseFloat(input.value):0;
+  if(!amt||amt<=0){ toast('Enter a stake amount','err'); return; }
+  if(amt<er){ toast(`Minimum entry is ${fmt(er)} SOL`,'err'); return; }
+  const ns=nextStake(chain),np=nextProfit(chain);
+  chain.stakers.forEach(s=>s.last=false);
+  chain.stakers.push({addr:ME,staked:ns,profit:np,last:true,me:true,enteredAt:Date.now()});
+  chain.totalStaked+=ns;
+  chain.status=chain.stakers.length>=5?'hot':'active';
+  myPositions.forEach(p=>{if(p.chainId===chainId) p.isLast=false;});
+  myPositions.push({chainId,staked:ns,profit:np,isLast:true,posId:`p${Date.now()}`,enteredAt:Date.now()});
+  closeModal(); renderChainPage(); buildChainDropdown();
+  toast(`Entered ${chain.label} chain — paid ${fmt(er)} SOL`,'ok');
+}
+
+function submitDonate(chainId){
+  const input=document.getElementById('dAmt');
+  const amt=input?parseFloat(input.value):0;
+  if(!amt||amt<=0){ toast('Enter a valid amount','err'); return; }
+  if(!walletConnected){ toast('Connect wallet first','err'); return; }
+  const chain=CHAINS[chainId];
+  chain.donPot=parseFloat((chain.donPot+amt).toFixed(8));
+  closeModal();
+  renderChainPage(); renderProfile();
+  toast(`Donated ${fmt(amt)} SOL to ${chain.label} community pot (+ 1% fee + 0.01 SOL flat)`,'ok');
+}
+
+function doBreak(chainId){
+  if(!timerExpired(CHAINS[chainId])){ toast('Timer not expired yet','err'); return; }
+  const chain=CHAINS[chainId];
+  // 1% of yield pool → donation pot BEFORE final calc (manual break only)
+  const yieldFee = chain.yieldPool * 0.01;
+  chain.donPot += yieldFee;
+  chain.yieldPool -= yieldFee;
+  const y = chain.yieldPool;
+  const yAfterWithdrawal = y * (1 - WITHDRAWAL_FEE);
+  // Add pending unstake group
+  const accts = chain.stakers.map(s=>s.addr);
+  addPendingUnstake(chain.label, accts);
+  chain.stakers=[];chain.yieldPool=0;chain.donPot=0;chain.status='empty';chain.totalStaked=0;
+  myPositions=myPositions.filter(p=>p.chainId!==chainId);
+  closeModal(); renderChainPage(); renderProfile(); buildChainDropdown();
+  toast(`Chain broken! You collected ${fmt(yAfterWithdrawal)} SOL yield (after 1% withdrawal fee) 🎉`,'ok');
+}
+
+function triggerCommunityBreak(chainId){
+  const chain=CHAINS[chainId];
+  if(!chain.stakers.length) return;
+  const lastS=chain.stakers[chain.stakers.length-1];
+  if(chain.donPot < lastS.staked - 0.000001){ toast('Community pot has not reached target yet','err'); return; }
+  const yield_amt=chain.yieldPool;
+  const pot_amt=chain.donPot;
+  const accts=chain.stakers.map(s=>s.addr);
+  addPendingUnstake(chain.label, accts);
+  chain.stakers=[];chain.yieldPool=0;chain.donPot=0;chain.status='empty';chain.totalStaked=0;
+  myPositions=myPositions.filter(p=>p.chainId!==chainId);
+  renderChainPage(); renderProfile(); buildChainDropdown();
+  toast(`${chain.label} community break triggered! Community splits ${fmt(yield_amt)} SOL yield. Last holder got ${fmt(pot_amt)} SOL pot.`,'ok');
+}
+
+function exitChain(chainId){
+  // First entrant exit — refund stake minus fees
+  const chain=CHAINS[chainId];
+  if(chain.stakers.length!==1||!chain.stakers[0].me){ toast('Cannot exit — others have entered after you','err'); return; }
+  const refund = chain.stakers[0].staked; // get stake back (fees already taken)
+  chain.stakers=[];chain.yieldPool=0;chain.donPot=0;chain.status='empty';chain.totalStaked=0;
+  myPositions=myPositions.filter(p=>p.chainId!==chainId);
+  renderChainPage(); renderProfile(); buildChainDropdown();
+  toast(`Exited ${chain.label} chain — refunded ${fmt(refund)} SOL (fees non-refundable)`,'ok');
+}
+
+function addPendingUnstake(label, accts){
+  // Split into groups of 5
+  for(let i=0;i<accts.length;i+=5){
+    pendingUnstake.push({ chainLabel:label, accounts:accts.slice(i,i+5), id: Date.now()+i });
+  }
+  renderUnstakePage();
+}
+
+
+function compoundRewards(){
+  if(unstakedRewards<=0){ toast('No unstaked rewards to compound','err'); return; }
+  if(!walletConnected){ toast('Connect wallet first','err'); return; }
+  document.getElementById('mTitle').textContent='Compound Rewards';
+  document.getElementById('mBody').innerHTML=`
+    <div class="m-note"><strong>Compounding re-stakes your unstaked rewards</strong> back into the yield pool so they continue generating yield.</div>
+    <div class="m-rows" style="margin-bottom:14px">
+      <div class="m-row"><span class="m-k">Available to compound</span><span class="m-v g">${fmt(unstakedRewards)} SOL</span></div>
+    </div>
+    ${validatorSelectHTML()}`;
+  document.getElementById('mFoot').innerHTML=`
+    <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-g" onclick="doCompound()">Compound</button>`;
+  openModal();
+}
+
+function doCompound(){
+  const validator=document.getElementById('validatorSelect')?.value;
+  if(!validator){ toast('Please select a validator','err'); return; }
+  const compounded=unstakedRewards;
+  stakedRewards+=compounded;
+  unstakedRewards=0;
+  closeModal();
+  renderChainPage(); renderProfile();
+  toast(`Compounded ${fmt(compounded)} SOL via ${validator}`,'ok');
+}
+
+function totalAvailableAccounts(){
+  return pendingUnstake.reduce((a,g)=>a+g.accounts.length, 0);
+}
+
+function renderTriggerPage(){
+  const el=document.getElementById('triggerAvailCount');
+  if(el) el.textContent=totalAvailableAccounts();
+  updateTriggerReward();
+}
+
+function updateTriggerReward(){
+  const input=document.getElementById('triggerAmt');
+  const display=document.getElementById('triggerRewardDisplay');
+  if(!input||!display) return;
+  const val=Math.min(Math.max(parseInt(input.value)||0,0),5);
+  display.textContent=`0.01 SOL × ${val} = ${fmt(val*UNSTAKE_REWARD,4)} SOL`;
+}
+
+function doTriggerUnstake(){
+  if(!walletConnected){ toast('Connect wallet first','err'); return; }
+  const input=document.getElementById('triggerAmt');
+  const amt=Math.min(Math.max(parseInt(input?.value)||0,0),5);
+  if(amt<=0){ toast('Enter how many accounts to unstake','err'); return; }
+  const available=totalAvailableAccounts();
+  if(available<=0){ toast('No accounts available to unstake','err'); return; }
+  const actual=Math.min(amt,available);
+  // Remove accounts from pendingUnstake
+  let remaining=actual;
+  while(remaining>0 && pendingUnstake.length){
+    const g=pendingUnstake[0];
+    if(g.accounts.length<=remaining){
+      remaining-=g.accounts.length;
+      pendingUnstake.shift();
+    } else {
+      g.accounts.splice(0,remaining);
+      remaining=0;
+    }
+  }
+  const reward=actual*UNSTAKE_REWARD;
+  if(input) input.value='';
+  renderTriggerPage();
+  toast(`Unstaked ${actual} account${actual>1?'s':''} — earned ${fmt(reward,2)} SOL 🎉`,'ok');
+}
+
+function renderUnstakePage(){
+  renderTriggerPage();
+  // also update unstake section in profile if present
+  const el=document.getElementById('unstakeSection');
+  if(!el) return;
+  if(!pendingUnstake.length){ el.innerHTML='<div style="text-align:center;padding:16px;color:var(--tx3);font-size:13px">No accounts pending unstake</div>'; return; }
+  el.innerHTML=pendingUnstake.map(g=>`
+    <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:9px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+      <div style="font-size:12px;color:var(--tx2)">${g.chainLabel} · ${g.accounts.length} wallet${g.accounts.length>1?'s':''}</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:12px;color:var(--g);font-family:'DM Mono',monospace">+${fmt(g.accounts.length*UNSTAKE_REWARD,2)} SOL</span>
+        <button class="btn btn-ghost btn-sm" onclick="showPage('trigger-page')">View →</button>
+      </div>
+    </div>`).join('');
+}
+
+function withdrawRewards(){
+  if(!walletConnected){ toast('Connect wallet first','err'); return; }
+  const withdrawable = myPositions.filter(p=>!p.isLast).reduce((a,p)=>a+(p.profit||0),0);
+  const availableNow = parseFloat((unstakedRewards).toFixed(4)); // SOL actually liquid and ready
+  document.getElementById('mTitle').textContent='Withdraw Rewards';
+  document.getElementById('mBody').innerHTML=`
+    <div class="m-rows" style="margin-bottom:14px">
+      <div class="m-row"><span class="m-k">Total earned rewards</span><span class="m-v g">${fmt(withdrawable)} SOL</span></div>
+      <div class="m-row"><span class="m-k">1% withdrawal fee</span><span class="m-v gold">${fmt(withdrawable*0.01,4)} SOL</span></div>
+    </div>
+    <div class="m-field">
+      <label>Amount to withdraw (SOL)</label>
+      <div class="m-input-wrap"><input class="m-input" type="number" id="wAmt" placeholder="0.0000" step="0.0001" min="0.0001" max="${fmt(withdrawable*0.99)}"><span class="m-suffix">SOL</span></div>
+    </div>
+    <div style="background:rgba(255,190,11,.07);border:1px solid rgba(255,190,11,.2);border-radius:9px;padding:11px 13px;font-size:12px;color:var(--tx2);line-height:1.6;">
+      ⚠️ Some rewards may still be cooling down or pending unstake. If your withdrawal can't be satisfied right now, please try again shortly. <br><br>
+      <span style="color:var(--gold);font-family:'DM Mono',monospace;font-weight:500">${fmt(availableNow)} SOL</span> is currently available and ready to withdraw from the platform.
+    </div>`;
+  document.getElementById('mFoot').innerHTML=`
+    <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-g" onclick="doWithdraw()">Withdraw</button>`;
+  openModal();
+}
+
+function doWithdraw(){
+  const input = document.getElementById('wAmt');
+  const amt = input ? parseFloat(input.value) : 0;
+  if(!amt||amt<=0){ toast('Enter a valid amount','err'); return; }
+  const withdrawable = myPositions.filter(p=>!p.isLast).reduce((a,p)=>a+(p.profit||0),0);
+  if(amt > withdrawable*0.99){ toast('Amount exceeds available rewards after fee','err'); return; }
+  const fee = amt * WITHDRAWAL_FEE;
+  const received = amt - fee;
+  closeModal();
+  toast(`Withdrew ${fmt(received)} SOL (after 1% fee) 🎉`,'ok');
+}
+
+/* ── MARKETPLACE ── */
+function buildMktList(chainId){
+  let list = listings.filter(l => mktTab==='mine' ? l.seller===ME : true);
+  // filter to current chain only
+  list = list.filter(l => l.chainId===chainId);
+  if(!list.length) return `<div class="mkt-empty">${mktTab==='mine'?'You have no active listings on this chain.':'No positions listed for sale on this chain.'}</div>`;
+  // sort
+  if(mktFilter==='recent') list.sort((a,b)=>b.listedAt-a.listedAt);
+  if(mktFilter==='chain')  list.sort((a,b)=>a.staked-b.staked);
+  if(mktFilter==='profit') list.sort((a,b)=>b.profit-a.profit);
+
+  return list.map(l=>{
+    const chain = CHAINS[l.chainId];
+    const buyerSpread = l.staked * (chain?chain.spread/100:0);
+    const totalStakedWithPos = chain ? chain.totalStaked : l.staked;
+    const buyerYieldShare = chain && totalStakedWithPos>0 ? chain.yieldPool*(l.staked/totalStakedWithPos) : 0;
+    const buyerDonShare  = chain && totalStakedWithPos>0 ? chain.donPot*(l.staked/totalStakedWithPos) : 0;
+    const estPLCommunity = (buyerSpread + buyerYieldShare) - l.askPrice;
+    const estPLManual    = (buyerSpread + buyerDonShare)   - l.askPrice;
+    const isMine = l.seller===ME;
+    return `<div class="mkt-row">
+      <div class="mkt-row-left">
+        <div class="mkt-row-chain">${l.chainLabel} Chain · pos ${l.posId}</div>
+        <div class="mkt-row-price">${fmt(l.askPrice)} SOL</div>
+        <div class="mkt-row-profit ${estPLCommunity>=0?'pos':'neg'}">Community break: ${estPLCommunity>=0?'+':''}${fmt(estPLCommunity)} SOL</div>
+        <div class="mkt-row-profit ${estPLManual>=0?'pos':'neg'}">Manual break: ${estPLManual>=0?'+':''}${fmt(estPLManual)} SOL</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-shrink:0;align-items:center;">
+        ${isMine
+          ? `<button class="btn btn-ghost btn-sm" onclick="openReplaceListing('${l.id}')">Replace</button>
+             <button class="btn btn-red btn-sm" onclick="cancelListing('${l.id}')">Cancel</button>`
+          : `<button class="btn btn-g btn-sm" onclick="openBuyListing('${l.id}')" ${!walletConnected?'disabled':''}>Buy</button>`
+        }
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setMktTab(tab){ mktTab=tab; renderChainPage(); }
+function setMktFilter(f){ mktFilter=f; renderChainPage(); }
+
+function openSell(posId){
+  if(!walletConnected){ toast('Connect wallet first','err'); return; }
+  const pos = myPositions.find(p=>p.posId===posId);
+  if(!pos){ toast('Position not found','err'); return; }
+  const chain = CHAINS[pos.chainId];
+  document.getElementById('mTitle').textContent=`Sell Position — ${chain.label} Chain`;
+  document.getElementById('mBody').innerHTML=`
+    <div class="m-note">Post your position for sale. Any user can buy it at your listed price. You can cancel at any time.</div>
+    <div class="m-rows" style="margin-bottom:14px">
+      <div class="m-row"><span class="m-k">Your staked amount</span><span class="m-v">${fmt(pos.staked)} SOL</span></div>
+      <div class="m-row"><span class="m-k">Est. spread profit</span><span class="m-v g">+${fmt(pos.profit||0)} SOL</span></div>
+    </div>
+    <div class="m-field">
+      <label>Your asking price (SOL)</label>
+      <div class="m-input-wrap"><input class="m-input" type="number" id="sellPrice" placeholder="${fmt((pos.staked+(pos.profit||0))*1.05)}" step="0.0001" min="0.0001"><span class="m-suffix">SOL</span></div>
+    </div>`;
+  document.getElementById('mFoot').innerHTML=`
+    <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-g" onclick="confirmSell('${posId}')">Confirm Listing</button>`;
+  openModal();
+}
+
+function confirmSell(posId){
+  const input = document.getElementById('sellPrice');
+  const price = parseFloat(input?.value);
+  if(!price||price<=0){ toast('Enter a valid asking price','err'); return; }
+  const pos = myPositions.find(p=>p.posId===posId);
+  if(!pos) return;
+  const chain = CHAINS[pos.chainId];
+  // add to listings
+  listings.push({
+    id: 'l'+Date.now(),
+    chainId: pos.chainId,
+    posId: pos.posId,
+    seller: ME,
+    askPrice: price,
+    staked: pos.staked,
+    profit: pos.profit||0,
+    chainLabel: chain.label,
+    listedAt: Date.now(),
+  });
+  closeModal(); renderChainPage(); renderProfile();
+  toast(`Position listed for ${fmt(price)} SOL`,'ok');
+}
+
+function openBuyListing(listingId){
+  const l = listings.find(x=>x.id===listingId);
+  if(!l){ toast('Listing not found','err'); return; }
+  const chain = CHAINS[l.chainId];
+  const buyerSpread = l.staked*(chain?chain.spread/100:0);
+  const totalStakedWithPos = chain ? chain.totalStaked : l.staked;
+  const buyerYieldShare = chain&&totalStakedWithPos>0?chain.yieldPool*(l.staked/totalStakedWithPos):0;
+  const buyerDonShare   = chain&&totalStakedWithPos>0?chain.donPot*(l.staked/totalStakedWithPos):0;
+  const estPLCommunity  = (buyerSpread+buyerYieldShare)-l.askPrice;
+  const estPLManual     = (buyerSpread+buyerDonShare)-l.askPrice;
+  document.getElementById('mTitle').textContent=`Buy Position — ${l.chainLabel} Chain`;
+  document.getElementById('mBody').innerHTML=`
+    <div class="m-note">You are buying a position in the ${l.chainLabel} chain. At break you receive what the next entrant paid — your spread return plus a share of either the yield pool or community pot.</div>
+    <div class="m-rows">
+      <div class="m-row"><span class="m-k">You pay</span><span class="m-v g">${fmt(l.askPrice)} SOL</span></div>
+      <div class="m-row"><span class="m-k">Position staked</span><span class="m-v">${fmt(l.staked)} SOL</span></div>
+      <div class="m-row"><span class="m-k">Spread profit</span><span class="m-v g">+${fmt(buyerSpread)} SOL</span></div>
+      <div class="m-row"><span class="m-k">Est. profit if community break</span><span class="m-v ${estPLCommunity>=0?'g':'r'}">${estPLCommunity>=0?'+':''}${fmt(estPLCommunity)} SOL</span></div>
+      <div class="m-row"><span class="m-k">Est. profit if manual break</span><span class="m-v ${estPLManual>=0?'g':'r'}">${estPLManual>=0?'+':''}${fmt(estPLManual)} SOL</span></div>
+    </div>`;
+  document.getElementById('mFoot').innerHTML=`
+    <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-g" onclick="confirmBuy('${listingId}')">Buy Position</button>`;
+  openModal();
+}
+
+function confirmBuy(listingId){
+  const idx = listings.findIndex(x=>x.id===listingId);
+  if(idx===-1) return;
+  const l = listings[idx];
+  listings.splice(idx,1);
+  // add to my positions
+  myPositions.push({ chainId:l.chainId, staked:l.staked, profit:l.profit, isLast:false, posId:`p${Date.now()}`, enteredAt:Date.now() });
+  closeModal(); renderChainPage(); renderProfile();
+  toast(`Position purchased for ${fmt(l.askPrice)} SOL 🎉`,'ok');
+}
+
+function cancelListing(listingId){
+  const idx = listings.findIndex(x=>x.id===listingId);
+  if(idx===-1) return;
+  listings.splice(idx,1);
+  renderChainPage(); renderProfile();
+  toast('Listing cancelled','ok');
+}
+
+function openReplaceListing(listingId){
+  const l = listings.find(x=>x.id===listingId);
+  if(!l) return;
+  document.getElementById('mTitle').textContent=`Replace Listing — ${l.chainLabel} Chain`;
+  document.getElementById('mBody').innerHTML=`
+    <div class="m-note">Update your asking price. The old listing will be replaced.</div>
+    <div class="m-rows" style="margin-bottom:14px">
+      <div class="m-row"><span class="m-k">Current ask</span><span class="m-v">${fmt(l.askPrice)} SOL</span></div>
+    </div>
+    <div class="m-field">
+      <label>New asking price (SOL)</label>
+      <div class="m-input-wrap"><input class="m-input" type="number" id="replacePrice" placeholder="${fmt(l.askPrice)}" step="0.0001" min="0.0001"><span class="m-suffix">SOL</span></div>
+    </div>`;
+  document.getElementById('mFoot').innerHTML=`
+    <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-g" onclick="confirmReplace('${listingId}')">Update Listing</button>`;
+  openModal();
+}
+
+function confirmReplace(listingId){
+  const input = document.getElementById('replacePrice');
+  const price = parseFloat(input?.value);
+  if(!price||price<=0){ toast('Enter a valid price','err'); return; }
+  const l = listings.find(x=>x.id===listingId);
+  if(!l) return;
+  l.askPrice = price;
+  l.listedAt = Date.now();
+  closeModal(); renderChainPage();
+  toast(`Listing updated to ${fmt(price)} SOL`,'ok');
+}
+
+function toast(msg,type='ok'){
+  const c=document.getElementById('toasts');
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  t.innerHTML=`<span>${type==='ok'?'✓':'✕'}</span> <span>${msg}</span>`;
+  c.appendChild(t);
+  setTimeout(()=>t.remove(),4500);
+}
+
+let yv=12.84;
+setInterval(()=>{yv+=Math.random()*.003;const el=document.getElementById('ls-yield');if(el)el.textContent=yv.toFixed(4);},3000);
+</script>
+</body>
+</html>
