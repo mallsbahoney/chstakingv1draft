@@ -1,0 +1,12 @@
+# Standard Anchor/Rust build artifacts
+target/deploy
+target/release
+target/debug
+target/bpfel-unknown-unknown
+target/.rustc_info.json
+.anchor
+node_modules
+programs
+tests
+scripts
+Cargo.lock
