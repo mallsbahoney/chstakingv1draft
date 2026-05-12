@@ -1,0 +1,111 @@
+Chainstaking v3 update 
+
+There are 10 pre-existing chains, each with their own specific spread & each starting at 0.01 SOL to enter:
+
+       •    5%
+	∙	10%
+	∙	25%
+	∙	50%
+	∙	100%
+	∙	250%
+	∙	500%
+	∙	1000%
+	∙	5000%
+	∙	10000%
+
+The first entrant of a chain can always exit (get their SOL back - fees) until someone else enters. 
+
+However if someone else enters after them, they can’t exit until the chain is broken. 
+
+Whenever someone enters in a chain, they are staking their invested SOL. 
+
+In order for someone else to enter after them, they must pay what the last person paid + (spread)%. 
+
+This means the cost to enter raises with each new entrant. 
+
+This continues with each new SOL amount being staked for entry, until someone breaks the chain.
+
+There are 2 ways to break a chain: 
+
+User breaks the chain
+Whoever is the last person to enter manually triggers the chain to break.
+
+Donation pot for the chain
+If the donation pot matches the cost to enter, it is used to enter (& buy out last entrant as result), which breaks the chain automatically.
+
+All of the SOL in the donation pot is also staked as soon as it enters the pot. 
+
+Whenever a chain is broken:
+-Everybody has their SOL unstaked. 
+-Once unstaked, everyone gets paid the original paid amount that the entrant AFTER them paid (and the first entry always goes to the Donation Pot)
+-The last entry gets paid either the donation pot (if community breaks the chain), or the entire yield pot (if they break chain manually)
+
+If a donation broke the chain:
+-This user collects the total donation pot (which would be the same value as if someone entered after him)
+-The yield pot is split between everyone before them 
+-Yield Pot divided by (how much SOL staked) to determine extra amount for everyone based on their SOL staked. 
+
+If a user broke the chain: 
+-This user collects ALL yield pot 
+-Everybody else splits the donation pot 
+-Simple distribution: user collects all the yield pot 
+-Other users get the previous amount of SOL (single amount) + the extra split from the donation pot 
+
+So it is an auction for the yield pot:
+-If a user breaks the chain (ends the auction), they take the yield pot
+-If the community breaks the chain (ends the auction), they split the yield pot
+
+The longer you wait at the top…the more yield that generates but more opportunity to get beat the longer you wait.
+
+If you donate towards the buy out…you potentially get your spread profit quicker + extra on top (so waiting helps you too).
+
+Every donation does a check for the current pot + what it will be at after the donation and checks to see if that new value would be over (break value) after the donation & if it does, the break is triggered with that said donation (automatic with no manual trigger required).
+
+There is a 5 minute timer after each new entry (saves unixtimestamp and then adds 5 minutes). 
+
+This timer must be expired (unixtimestamp greater than) in order for a user to manually break the chain. 
+(This prevents users from simply entering and immediately breaking the chain before anyone gets a chance to beat them)
+
+There is a 1% fee ADDED to all buys/stakes and donations (no fees on withdrawals on rewards, just an added fee on the actual crypto when it first comes in)
+
+——
+
+Chain staking technical analysis 
+
+All SOL coming into the contract (whether through donations or entries into a chain) are staked. 
+
+The program keeps balances for:
+-Total rewards earned from both donations and entries (yield pot)
+-User’s Principals from entries & the principal for the entrant after them (for paying back previous entrants in chain upon chain break)
+-Total donations amount (donations are staked too, so just take the principals for the donations & rewards generated from donations are calculated as part of the yield pot). 
+-(Current amount - principal) is used by the program to determine what amount in each stake account is the principal vs rewards 
+
+These above balances in the program are used to calculate how much extra SOL users get after the chain breaks: 
+
+When a Community chain break occurs: total donations simply goes to the current leader, and Total yield pot amount divided by (total principals from entries) = how much extra SOL users get according to their principal
+
+When a Manual chain break occurs:User simply collects all yield pot, and Total donations amount divided by (total principals from entries) = how much extra SOL users get according to their principal
+
+No matter what break occurs: Each user that is not the leader always receives the principal of the entrant after them 
+
+So this leads every final calculation of rewards for non leaders to be: (principal of entrant after them) + (extra amount of SOL either from yield pot or donation pot)
+
+And leads very final calculation of rewards for leaders to be either: (total yield pot) or (total donation pot)
+
+At the end of every chain, each account needs to be unstaked. 
+
+There is a flat 1% fee ADDED to each entry and each donation + a flat 0.01 SOL fee added to each entry and each donation. 
+
+The 0.01 SOL fee is the only SOL that doesn’t get staked, as that’s held as flat rewards for unstaking each account made from entries or donations… this means once a chain breaks, any user can trigger the accounts to be unstaked & receive 0.01 SOL immediately. 
+
+There is also a flat 1% fee TAKEN from all rewards upon withdrawal of them.
+
+The 1% fee from entries & rewards always go directly to the company & the 0.01 SOL rewards are always held for triggers.
+
+When a chain breaks, every associated staking account that was made as a result is displayed in groups of 5. 
+
+Each staking account has a 0.01 SOL reward attatched to unstaking it and any user can unstake it just by clicking “Unstake”.
+
+This means each group will unstake 5 accounts and distribute 0.01 SOL reward for each (0.05 SOL total) to the triggering user.
+
+
