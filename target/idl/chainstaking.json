@@ -1,0 +1,1668 @@
+{
+  "address": "A4XAJ3tE5HYmCSQkfbgzGSdTjrsudMEy6EUqoYLjXRCY",
+  "metadata": {
+    "name": "chainstaking",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "ChainStaking Phase 1 Anchor program scaffold"
+  },
+  "instructions": [
+    {
+      "name": "compound_rewards",
+      "discriminator": [
+        254,
+        191,
+        226,
+        120,
+        82,
+        115,
+        5,
+        87
+      ],
+      "accounts": [
+        {
+          "name": "caller",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "validator_registry",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  108,
+                  105,
+                  100,
+                  97,
+                  116,
+                  111,
+                  114,
+                  95,
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "chain_account",
+          "writable": true
+        },
+        {
+          "name": "compound_record",
+          "writable": true
+        },
+        {
+          "name": "stake_tracker",
+          "writable": true
+        },
+        {
+          "name": "stake_account",
+          "docs": [
+            "Client-generated stake account keypair - must be a signer."
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "chain_authority"
+        },
+        {
+          "name": "validator_vote"
+        },
+        {
+          "name": "clock",
+          "address": "SysvarC1ock11111111111111111111111111111111"
+        },
+        {
+          "name": "rent"
+        },
+        {
+          "name": "stake_history"
+        },
+        {
+          "name": "stake_config"
+        },
+        {
+          "name": "stake_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "CompoundRewardsArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "compute_payouts",
+      "discriminator": [
+        161,
+        59,
+        190,
+        177,
+        227,
+        166,
+        68,
+        169
+      ],
+      "accounts": [
+        {
+          "name": "caller",
+          "docs": [
+            "Anyone can crank — permissionless."
+          ],
+          "signer": true
+        },
+        {
+          "name": "global_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "chain_account",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "ComputePayoutsArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "donate_to_chain",
+      "discriminator": [
+        47,
+        221,
+        200,
+        179,
+        229,
+        69,
+        126,
+        114
+      ],
+      "accounts": [
+        {
+          "name": "donor",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "global_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "validator_registry",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  108,
+                  105,
+                  100,
+                  97,
+                  116,
+                  111,
+                  114,
+                  95,
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "chain_account",
+          "writable": true
+        },
+        {
+          "name": "trigger_vault",
+          "writable": true
+        },
+        {
+          "name": "donation_record",
+          "writable": true
+        },
+        {
+          "name": "stake_tracker",
+          "writable": true
+        },
+        {
+          "name": "stake_account",
+          "docs": [
+            "Client-generated stake account keypair - must be a signer."
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "chain_authority"
+        },
+        {
+          "name": "validator_vote"
+        },
+        {
+          "name": "fee_receiver",
+          "writable": true
+        },
+        {
+          "name": "clock",
+          "address": "SysvarC1ock11111111111111111111111111111111"
+        },
+        {
+          "name": "rent"
+        },
+        {
+          "name": "stake_history"
+        },
+        {
+          "name": "stake_config"
+        },
+        {
+          "name": "stake_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "DonateToChainArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "enter_chain",
+      "discriminator": [
+        194,
+        91,
+        150,
+        30,
+        201,
+        206,
+        103,
+        138
+      ],
+      "accounts": [
+        {
+          "name": "staker",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "global_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "validator_registry",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  108,
+                  105,
+                  100,
+                  97,
+                  116,
+                  111,
+                  114,
+                  95,
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "chain_account",
+          "writable": true
+        },
+        {
+          "name": "trigger_vault",
+          "writable": true
+        },
+        {
+          "name": "entry_account",
+          "writable": true
+        },
+        {
+          "name": "stake_tracker",
+          "writable": true
+        },
+        {
+          "name": "stake_account",
+          "docs": [
+            "Client-generated stake account keypair - must be a signer."
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "chain_authority"
+        },
+        {
+          "name": "validator_vote"
+        },
+        {
+          "name": "fee_receiver",
+          "writable": true
+        },
+        {
+          "name": "clock",
+          "address": "SysvarC1ock11111111111111111111111111111111"
+        },
+        {
+          "name": "rent"
+        },
+        {
+          "name": "stake_history"
+        },
+        {
+          "name": "stake_config"
+        },
+        {
+          "name": "stake_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "EnterChainArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "exit_first_entrant",
+      "discriminator": [
+        51,
+        246,
+        251,
+        156,
+        34,
+        180,
+        130,
+        108
+      ],
+      "accounts": [
+        {
+          "name": "staker",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "chain_account",
+          "writable": true
+        },
+        {
+          "name": "entry_account",
+          "writable": true
+        },
+        {
+          "name": "stake_tracker",
+          "writable": true
+        },
+        {
+          "name": "stake_account",
+          "docs": [
+            "Validated by matching entry_account.stake_account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "chain_authority"
+        },
+        {
+          "name": "clock",
+          "address": "SysvarC1ock11111111111111111111111111111111"
+        },
+        {
+          "name": "stake_history"
+        },
+        {
+          "name": "stake_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "chain_id",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "initialize_protocol",
+      "discriminator": [
+        188,
+        233,
+        252,
+        106,
+        134,
+        146,
+        202,
+        91
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "global_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "validator_registry",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  108,
+                  105,
+                  100,
+                  97,
+                  116,
+                  111,
+                  114,
+                  95,
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "InitializeProtocolArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "manual_break_chain",
+      "discriminator": [
+        246,
+        96,
+        173,
+        52,
+        141,
+        62,
+        139,
+        56
+      ],
+      "accounts": [
+        {
+          "name": "breaker",
+          "signer": true
+        },
+        {
+          "name": "global_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "chain_account",
+          "writable": true
+        },
+        {
+          "name": "clock",
+          "address": "SysvarC1ock11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "chain_id",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "trigger_unstake",
+      "discriminator": [
+        87,
+        68,
+        109,
+        207,
+        1,
+        239,
+        227,
+        195
+      ],
+      "accounts": [
+        {
+          "name": "triggerer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "chain_account"
+        },
+        {
+          "name": "trigger_vault",
+          "writable": true
+        },
+        {
+          "name": "chain_authority",
+          "docs": [
+            "Verified against the program-derived PDA in the handler."
+          ]
+        },
+        {
+          "name": "clock",
+          "address": "SysvarC1ock11111111111111111111111111111111"
+        },
+        {
+          "name": "stake_history"
+        },
+        {
+          "name": "stake_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "chain_id",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "withdraw_after_cooldown",
+      "discriminator": [
+        101,
+        136,
+        20,
+        96,
+        138,
+        80,
+        134,
+        67
+      ],
+      "accounts": [
+        {
+          "name": "recipient",
+          "docs": [
+            "The recipient of payout lamports. Can be anyone — permissionless completion."
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "global_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "chain_account",
+          "writable": true
+        },
+        {
+          "name": "entry_account",
+          "writable": true
+        },
+        {
+          "name": "stake_tracker",
+          "writable": true
+        },
+        {
+          "name": "stake_account",
+          "docs": [
+            "Validated by matching stake_tracker.stake_account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "chain_authority",
+          "writable": true
+        },
+        {
+          "name": "staker",
+          "docs": [
+            "The staker who originally entered — receives the payout."
+          ],
+          "writable": true
+        },
+        {
+          "name": "fee_receiver",
+          "writable": true
+        },
+        {
+          "name": "clock",
+          "address": "SysvarC1ock11111111111111111111111111111111"
+        },
+        {
+          "name": "stake_history"
+        },
+        {
+          "name": "stake_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "WithdrawAfterCooldownArgs"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "ChainAccount",
+      "discriminator": [
+        92,
+        225,
+        66,
+        81,
+        43,
+        153,
+        241,
+        67
+      ]
+    },
+    {
+      "name": "CompoundRecord",
+      "discriminator": [
+        104,
+        86,
+        46,
+        234,
+        219,
+        208,
+        72,
+        158
+      ]
+    },
+    {
+      "name": "DonationRecord",
+      "discriminator": [
+        219,
+        64,
+        180,
+        111,
+        72,
+        70,
+        71,
+        0
+      ]
+    },
+    {
+      "name": "EntryAccount",
+      "discriminator": [
+        76,
+        12,
+        50,
+        124,
+        214,
+        250,
+        136,
+        116
+      ]
+    },
+    {
+      "name": "GlobalConfig",
+      "discriminator": [
+        149,
+        8,
+        156,
+        202,
+        160,
+        252,
+        176,
+        217
+      ]
+    },
+    {
+      "name": "StakeTracker",
+      "discriminator": [
+        53,
+        70,
+        173,
+        72,
+        242,
+        110,
+        217,
+        64
+      ]
+    },
+    {
+      "name": "TriggerVault",
+      "discriminator": [
+        229,
+        182,
+        231,
+        58,
+        0,
+        42,
+        198,
+        13
+      ]
+    },
+    {
+      "name": "ValidatorRegistry",
+      "discriminator": [
+        168,
+        113,
+        195,
+        186,
+        62,
+        121,
+        163,
+        230
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "EmptyValidatorList",
+      "msg": "At least one validator must be provided during protocol initialization."
+    },
+    {
+      "code": 6001,
+      "name": "TooManyValidators",
+      "msg": "ValidatorRegistry cannot store more than 16 validators."
+    },
+    {
+      "code": 6002,
+      "name": "DuplicateValidator",
+      "msg": "ValidatorRegistry contains a duplicate validator pubkey."
+    },
+    {
+      "code": 6003,
+      "name": "InvalidRemainingAccountsLen",
+      "msg": "initialize_protocol expects 20 remaining accounts: 10 TriggerVault PDAs then 10 ChainAccount PDAs."
+    },
+    {
+      "code": 6004,
+      "name": "InvalidTriggerVaultPda",
+      "msg": "The provided TriggerVault account does not match the expected PDA for its chain."
+    },
+    {
+      "code": 6005,
+      "name": "InvalidChainAccountPda",
+      "msg": "The provided ChainAccount does not match the expected PDA for its chain."
+    },
+    {
+      "code": 6006,
+      "name": "PdaAccountNotWritable",
+      "msg": "The PDA account must be writable."
+    },
+    {
+      "code": 6007,
+      "name": "PdaAccountAlreadyInitialized",
+      "msg": "The PDA account is already initialized or not system-owned."
+    },
+    {
+      "code": 6008,
+      "name": "ChainIsBroken",
+      "msg": "Chain is currently broken - no new entries allowed until the next round."
+    },
+    {
+      "code": 6009,
+      "name": "InsufficientEntryAmount",
+      "msg": "Entry amount is below the required minimum (spread or minimum entry)."
+    },
+    {
+      "code": 6010,
+      "name": "InvalidValidator",
+      "msg": "Validator vote account is not in the approved ValidatorRegistry list."
+    },
+    {
+      "code": 6011,
+      "name": "InvalidFeeReceiver",
+      "msg": "Fee receiver does not match GlobalConfig.authority."
+    },
+    {
+      "code": 6012,
+      "name": "InvalidChainAuthority",
+      "msg": "Chain authority PDA does not match the expected derivation."
+    },
+    {
+      "code": 6013,
+      "name": "InvalidTriggerVault",
+      "msg": "TriggerVault PDA does not match the expected derivation for this chain."
+    },
+    {
+      "code": 6014,
+      "name": "ExitNotAllowed",
+      "msg": "exit_first_entrant requires exactly 1 entry on the chain."
+    },
+    {
+      "code": 6015,
+      "name": "ExitWrongStaker",
+      "msg": "Caller does not match the entry's staker."
+    },
+    {
+      "code": 6016,
+      "name": "ArithmeticOverflow",
+      "msg": "Arithmetic overflow in checked math operation."
+    },
+    {
+      "code": 6017,
+      "name": "AlreadyWithdrawn",
+      "msg": "Stake account has already been withdrawn."
+    },
+    {
+      "code": 6018,
+      "name": "InvalidDonationAmount",
+      "msg": "Donation amount must be greater than zero."
+    },
+    {
+      "code": 6019,
+      "name": "DonationRequiresActiveLeader",
+      "msg": "Donations require an active chain leader."
+    },
+    {
+      "code": 6020,
+      "name": "InvalidDonationIndex",
+      "msg": "Donation index does not match the chain's next donation slot."
+    },
+    {
+      "code": 6021,
+      "name": "InvalidCompoundAmount",
+      "msg": "Compound amount must be greater than zero."
+    },
+    {
+      "code": 6022,
+      "name": "InsufficientLiquidRewards",
+      "msg": "Not enough liquid rewards are available to compound."
+    },
+    {
+      "code": 6023,
+      "name": "InvalidBreakType",
+      "msg": "Break type is invalid for payout computation."
+    },
+    {
+      "code": 6024,
+      "name": "InsufficientEntriesForPayouts",
+      "msg": "At least two entries are required to compute payouts."
+    },
+    {
+      "code": 6025,
+      "name": "PayoutEntriesOutOfOrder",
+      "msg": "Entry payout inputs must be ordered by contiguous positions."
+    },
+    {
+      "code": 6026,
+      "name": "TooManyPayoutEntries",
+      "msg": "Payout computation received more entries than allowed in one call."
+    },
+    {
+      "code": 6027,
+      "name": "MismatchedStakeBalanceCount",
+      "msg": "Yield accounting requires the same number of stake trackers and stake accounts."
+    },
+    {
+      "code": 6028,
+      "name": "InvalidPayoutPrincipalPool",
+      "msg": "The payout principal pool must be non-zero when distributing pooled rewards."
+    },
+    {
+      "code": 6029,
+      "name": "ManualBreakUnauthorized",
+      "msg": "Only the current chain leader (last_entry_authority) can trigger a manual break."
+    },
+    {
+      "code": 6030,
+      "name": "ManualBreakRequiresMultipleEntries",
+      "msg": "Manual break requires at least 2 entries - single entrant must use exit_first_entrant."
+    },
+    {
+      "code": 6031,
+      "name": "CooldownNotExpired",
+      "msg": "Cooldown period has not expired yet."
+    },
+    {
+      "code": 6032,
+      "name": "ChainNotBroken",
+      "msg": "trigger_unstake requires a broken chain."
+    },
+    {
+      "code": 6033,
+      "name": "InvalidTriggerUnstakeAccounts",
+      "msg": "trigger_unstake expects 1 to 5 remaining account pairs ordered as [stake_tracker, stake_account]."
+    },
+    {
+      "code": 6034,
+      "name": "TriggerUnstakeBatchTooLarge",
+      "msg": "trigger_unstake cannot process more stake accounts than the configured batch size."
+    },
+    {
+      "code": 6035,
+      "name": "StakeTrackerChainMismatch",
+      "msg": "The provided StakeTracker belongs to a different chain."
+    },
+    {
+      "code": 6036,
+      "name": "StakeTrackerStakeAccountMismatch",
+      "msg": "The provided native stake account does not match the StakeTracker record."
+    },
+    {
+      "code": 6037,
+      "name": "InvalidStakeAccountOwner",
+      "msg": "The provided stake account is not owned by the native Stake Program."
+    },
+    {
+      "code": 6038,
+      "name": "StakeAlreadyDeactivated",
+      "msg": "Stake account has already been deactivated."
+    },
+    {
+      "code": 6039,
+      "name": "InsufficientTriggerRewardReserve",
+      "msg": "TriggerVault does not have enough reserved lamports to pay the trigger reward."
+    },
+    {
+      "code": 6040,
+      "name": "StakeNotDeactivated",
+      "msg": "Stake account has not been deactivated yet — call trigger_unstake first."
+    },
+    {
+      "code": 6041,
+      "name": "StakeTrackerRoundMismatch",
+      "msg": "The provided StakeTracker belongs to a different round."
+    },
+    {
+      "code": 6042,
+      "name": "PayoutsRequireBrokenChain",
+      "msg": "compute_payouts: the chain must be broken before payouts can be computed."
+    },
+    {
+      "code": 6043,
+      "name": "RoundAlreadySettled",
+      "msg": "compute_payouts: the round has already been settled — payouts already computed."
+    },
+    {
+      "code": 6044,
+      "name": "InvalidComputePayoutsAccounts",
+      "msg": "compute_payouts: remaining_accounts must contain entry_account + stake_account pairs."
+    },
+    {
+      "code": 6045,
+      "name": "PayoutEntryMismatch",
+      "msg": "compute_payouts: the entry account does not belong to the current chain/round."
+    },
+    {
+      "code": 6046,
+      "name": "RoundNotSettled",
+      "msg": "withdraw_after_cooldown: round payouts have not been settled yet — call compute_payouts first."
+    }
+  ],
+  "types": [
+    {
+      "name": "ChainAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "chain_id",
+            "type": "u8"
+          },
+          {
+            "name": "spread_bps",
+            "docs": [
+              "`u32` is required because the 10_000% chain equals 1_000_000 bps."
+            ],
+            "type": "u32"
+          },
+          {
+            "name": "entry_count",
+            "type": "u32"
+          },
+          {
+            "name": "current_round",
+            "docs": [
+              "current_round starts at 0.",
+              "Entries use current_round when created.",
+              "Incremented after break execution completes."
+            ],
+            "type": "u32"
+          },
+          {
+            "name": "last_entry_amount",
+            "type": "u64"
+          },
+          {
+            "name": "last_entry_timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "last_entry_authority",
+            "docs": [
+              "Pubkey::default() (all zeros) means no entry has been made yet."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "total_staked_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "frontend_estimated_yield_pool_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "donation_pot_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "donation_count",
+            "docs": [
+              "Next donation index for the active round."
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "is_broken",
+            "type": "bool"
+          },
+          {
+            "name": "break_type",
+            "docs": [
+              "0 = none, 1 = manual, 2 = community."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "chain_authority_bump",
+            "docs": [
+              "Bump of the chain_authority PDA (seeds: [b\"chain_auth\", &[chain_id]]).",
+              "Stored at init to avoid re-derivation cost during stake CPI signing."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "round_settled",
+            "docs": [
+              "Set to true once compute_payouts has processed all entries for this round.",
+              "Enables safe round advancement in withdraw_after_cooldown."
+            ],
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CompoundRecord",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "chain_id",
+            "type": "u8"
+          },
+          {
+            "name": "round",
+            "type": "u32"
+          },
+          {
+            "name": "compound_index",
+            "type": "u16"
+          },
+          {
+            "name": "amount_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "stake_account",
+            "type": "pubkey"
+          },
+          {
+            "name": "validator",
+            "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CompoundRewardsArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "chain_id",
+            "type": "u8"
+          },
+          {
+            "name": "compound_index",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ComputePayoutsArgs",
+      "docs": [
+        "Arguments for compute_payouts."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "chain_id",
+            "type": "u8"
+          },
+          {
+            "name": "start_position",
+            "docs": [
+              "The starting entry position for this paginated batch (inclusive)."
+            ],
+            "type": "u32"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DonateToChainArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "chain_id",
+            "type": "u8"
+          },
+          {
+            "name": "donation_index",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DonationRecord",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "chain_id",
+            "type": "u8"
+          },
+          {
+            "name": "round",
+            "type": "u32"
+          },
+          {
+            "name": "donation_index",
+            "type": "u16"
+          },
+          {
+            "name": "donor",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "stake_account",
+            "type": "pubkey"
+          },
+          {
+            "name": "validator",
+            "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "EnterChainArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "chain_id",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "EntryAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "chain_id",
+            "type": "u8"
+          },
+          {
+            "name": "round",
+            "type": "u32"
+          },
+          {
+            "name": "position",
+            "type": "u32"
+          },
+          {
+            "name": "staker",
+            "type": "pubkey"
+          },
+          {
+            "name": "principal_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "stake_account",
+            "type": "pubkey"
+          },
+          {
+            "name": "validator",
+            "type": "pubkey"
+          },
+          {
+            "name": "is_unstaked",
+            "type": "bool"
+          },
+          {
+            "name": "is_withdrawn",
+            "type": "bool"
+          },
+          {
+            "name": "payout_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GlobalConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "is_initialized",
+            "type": "bool"
+          },
+          {
+            "name": "total_chains",
+            "type": "u8"
+          },
+          {
+            "name": "fee_bps",
+            "type": "u16"
+          },
+          {
+            "name": "flat_fee_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "withdrawal_fee_bps",
+            "type": "u16"
+          },
+          {
+            "name": "cooldown_seconds",
+            "type": "i64"
+          },
+          {
+            "name": "unstake_batch_size",
+            "type": "u8"
+          },
+          {
+            "name": "trigger_reward_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "InitializeProtocolArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "validator_list",
+            "type": {
+              "vec": "pubkey"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "StakeTracker",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "chain_id",
+            "type": "u8"
+          },
+          {
+            "name": "round",
+            "type": "u32"
+          },
+          {
+            "name": "stake_account",
+            "type": "pubkey"
+          },
+          {
+            "name": "principal_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "source_type",
+            "type": "u8"
+          },
+          {
+            "name": "source_index",
+            "type": "u32"
+          },
+          {
+            "name": "is_active",
+            "type": "bool"
+          },
+          {
+            "name": "is_deactivated",
+            "type": "bool"
+          },
+          {
+            "name": "is_withdrawn",
+            "type": "bool"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TriggerVault",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "chain_id",
+            "type": "u8"
+          },
+          {
+            "name": "reserve_lamports",
+            "docs": [
+              "Logical trigger reward reserve tracked by the protocol.",
+              "Not guaranteed to equal account lamports().",
+              "Always use account lamports() for actual SOL balance checks."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ValidatorRegistry",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "validator_list",
+            "type": {
+              "vec": "pubkey"
+            }
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "No separate validator_count field - always use validator_list.len()."
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WithdrawAfterCooldownArgs",
+      "docs": [
+        "Arguments for withdraw_after_cooldown."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "chain_id",
+            "type": "u8"
+          },
+          {
+            "name": "source_type",
+            "docs": [
+              "The source_type of the stake tracker being withdrawn (entry=0, donation=1, compound=2)."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "source_index",
+            "docs": [
+              "The source_index of the stake tracker being withdrawn."
+            ],
+            "type": "u32"
+          },
+          {
+            "name": "entry_position",
+            "docs": [
+              "The position of the entry account whose payout_lamports is being claimed.",
+              "For entry stakes, this matches source_index. For donation/compound stakes,",
+              "this is the entry that the payout was computed against."
+            ],
+            "type": "u32"
+          }
+        ]
+      }
+    }
+  ]
+}
