@@ -1,0 +1,16 @@
+[features]
+resolution = true
+skip-lint = false
+
+[programs.devnet]
+chainstaking = "A4XAJ3tE5HYmCSQkfbgzGSdTjrsudMEy6EUqoYLjXRCY"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "Devnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "node scripts/patch-idl.js && yarn mocha -t 1000000 \"tests/**/*.spec.js\""
